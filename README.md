@@ -17,7 +17,6 @@ Although there are some mining rig profitability calculator websites, but there 
  
 The data we will be using includes price information of computer parts such as GPU, CPU, motherboard, power supply, etc. We plan to collect these data from online hardware retailers such as Newegg and Amazon. We will also need to collect the price information of bitcoins, and we plan to collect it from Google. 
 
-
 ## Description of function:
 
 ### Basic Functions:
@@ -36,6 +35,14 @@ update price and sales of computer hardware
 
 > This can help user easier to understand the tradeoff of different setups and choose the best setup based on comparison.
 
+## Team member
+
+|     Name    |              Github homepage              |
+|:-----------:|:-----------------------------------------:|
+| Jiajun Chen |               Not this time               |
+|   Ryan Au   |               Not this time               |
+|      Tx     |               Not this time               |
+|  Zhenye Na  | [Zhenye-Na](https://github.com/Zhenye-Na) |
 
 
 
