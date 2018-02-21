@@ -41,7 +41,7 @@ update price and sales of computer hardware
 |:-----------:|:-----------------------------------------:|
 | Jiajun Chen |               Not this time               |
 |   Ryan Au   |               Not this time               |
-|      Tx     |               Not this time               |
+|     Sean    |               Not this time               |
 |  Zhenye Na  | [Zhenye-Na](https://github.com/Zhenye-Na) |
 
 
