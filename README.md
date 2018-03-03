@@ -9,9 +9,10 @@ Mining Rig Assembly is a web application that allows the users to browse differe
 The bitcoin market is growing at an incredible speed because of the bitcoin price surges last year. As a result, many computer components such as GPUs are also experiencing dramatic price changes. Our application aims to help users decide the right time to invest in mining rigs, without having to monitor a large amount of price information at all time. 
 
 Although there are some mining rig profitability calculator websites, but there are several creative features distinguishing us from them:
-1.Users can set their expected cost  and expected profit.
+
+1. Users can set their expected cost  and expected profit.
 2. This website calculates the lowest cost of mining rig by comparing prices from different websites.
-3.This website can notify the users when the expected profit is met.
+3. This website can notify the users when the expected profit is met.
  
 ## Realness
  
