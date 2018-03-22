@@ -1,51 +1,155 @@
 <?php
 include('header.php');
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 ?>
 
-    <div class = "container">
-        <h3>Components List</h3>
-        <P> This is the components contents page. Click on the part you are searching for</P>	
-    </div>
+<script>
+function myFunction2(value) {
+    method = "post";
 
-<style>
-table, th, td {
-    border: 1px solid black;
-    border-collapse: collapse;
-    text-align: center;
+    var form = document.createElement("form");
+    form.setAttribute("method", method);
+    form.setAttribute("action", "info.php");
+
+    var name = document.createElement("input");
+    name.setAttribute("type", "hidden");
+    name.setAttribute("name", "name");
+    name.setAttribute("value", value);
+    form.appendChild(name);
+    
+    document.body.appendChild(form);
+    form.submit();
 }
-</style>
+</script>
 
 
-
-<table >
-    <tr>
-		<td class = "text-center" id="cpucell"><a href="/cpulist">CPU</a></td>
-	</tr>
-	<tr>
-		<td class = "text-center" id="motherboardcell"><a href="/motherboardlist">Motherboard</a></td>
-	</tr>
-	<tr>
-		<td class = "text-center" id="powersupplycell"><a href="/powersupplylist">Power supply</a></td>
-	</tr>
-	<tr>
-		<td class = "text-center" id="ramcell"><a href="/ramlist">RAM</a></td>
-	</tr>
-	<tr>
-		<td class = "text-center" id="casecell"><a href="/caselist">Case</a></td>
-	</tr>
-	<tr>
-		<td class = "text-center" id="gpucell"><a href="/gpulist">GPU</a></td>
-	</tr>
-	<tr>
-		<td class = "text-center" id="memorycell"><a href="/memorylist">Disk Memory</a></td>
-	</tr>
-    <tr>
-        <td class = "text-center" id="coolercell"><a href="/coolerlist">CPU Cooler</a></td>
-    </tr>
-</table>
+<?php
+require("db.php");
+$query = "SELECT * FROM components where name IN (SELECT name 
+                                       FROM mb);";
+$result = $mysqli->query($query) or die($mysqli->error);
+?>
 
 
+<div class = "container bg-info well well-lg">
+    <h2>MotherBoard</h2>
+    <div class="row text-center" style="display:flex; flex-wrap: wrap;">
+        <?php while($row = $result->fetch_assoc()) { ?>
+        <div class = "col-md-3 col-lg-2 col-sm-6">
+            <div class = "thumbnail" >
+                <?php echo '<img src='.$row['image_url'].'>'; ?>
+                <div class = "caption text-center">
+                    <h4><?php echo $row['name']; ?></h4>
+                </div>
+                <p>
+                    <?php echo "<a class = \"btn btn-success\" onclick=\"myFunction2('".$row['name']."')\">Info</a>"; ?>
+                </p>
+            </div>
+        </div>
+        <?php } ?>
+     </div>
+</div>
 
+<?php
+$query = "SELECT * FROM components where name IN (SELECT name 
+                                       FROM cpu);";
+$result = $mysqli->query($query) or die($mysqli->error);
+?>
+
+<div class = "container bg-info well well-lg">
+    <h2>CPU</h2>
+    <div class="row text-center" style="display:flex; flex-wrap: wrap;">
+        <?php while($row = $result->fetch_assoc()) { ?>
+        <div class = "col-md-3 col-lg-2 col-sm-6">
+            <div class = "thumbnail" >
+                <?php echo '<img src='.$row['image_url'].'>'; ?>
+                <div class = "caption text-center">
+                    <h4><?php echo $row['name']; ?></h4>
+                </div>
+                <p>
+                    <?php echo "<a class = \"btn btn-success\" onclick=\"myFunction2('".$row['name']."')\">Info</a>"; ?>
+                </p>
+            </div>
+        </div>
+        <?php } ?>
+     </div>
+</div>
+
+<?php
+$query = "SELECT * FROM components where name IN (SELECT name 
+                                       FROM gpu);";
+$result = $mysqli->query($query) or die($mysqli->error);
+?>
+
+<div class = "container bg-info well well-lg">
+    <h2>GPU</h2>
+    <div class="row text-center" style="display:flex; flex-wrap: wrap;">
+        <?php while($row = $result->fetch_assoc()) { ?>
+        <div class = "col-md-3 col-lg-2 col-sm-6">
+            <div class = "thumbnail" >
+                <?php echo '<img src='.$row['image_url'].'>'; ?>
+                <div class = "caption text-center">
+                    <h4><?php echo $row['name']; ?></h4>
+                </div>
+                <p>
+                    <?php echo "<a class = \"btn btn-success\" onclick=\"myFunction2('".$row['name']."')\">Info</a>"; ?>
+                </p>
+            </div>
+        </div>
+        <?php } ?>
+     </div>
+</div>
+
+<?php
+$query = "SELECT * FROM components where name IN (SELECT name 
+                                       FROM ram);";
+$result = $mysqli->query($query) or die($mysqli->error);
+?>
+
+<div class = "container bg-info well well-lg">
+    <h2>RAM</h2>
+    <div class="row text-center" style="display:flex; flex-wrap: wrap;">
+        <?php while($row = $result->fetch_assoc()) { ?>
+        <div class = "col-md-3 col-lg-2 col-sm-6">
+            <div class = "thumbnail" >
+                <?php echo '<img src='.$row['image_url'].'>'; ?>
+                <div class = "caption text-center">
+                    <h4><?php echo $row['name']; ?></h4>
+                </div>
+                <p>
+                    <?php echo "<a class = \"btn btn-success\" onclick=\"myFunction2('".$row['name']."')\">Info</a>"; ?>
+                </p>
+            </div>
+        </div>
+        <?php } ?>
+     </div>
+</div>
+
+<?php
+$query = "SELECT * FROM components where name IN (SELECT name 
+                                       FROM psu);";
+$result = $mysqli->query($query) or die($mysqli->error);
+?>
+
+<div class = "container bg-info well well-lg">
+    <h2>Power Supply</h2>
+    <div class="row text-center" style="display:flex; flex-wrap: wrap;">
+        <?php while($row = $result->fetch_assoc()) { ?>
+        <div class = "col-md-3 col-lg-2 col-sm-6">
+            <div class = "thumbnail" >
+                <?php echo '<img src='.$row['image_url'].'>'; ?>
+                <div class = "caption text-center">
+                    <h4><?php echo $row['name']; ?></h4>
+                </div>
+                <p>
+                    <?php echo "<a class = \"btn btn-success\" onclick=\"myFunction2('".$row['name']."')\">Info</a>"; ?>
+                </p>
+            </div>
+        </div>
+        <?php } ?>
+     </div>
+</div>
 
 <?php
 include('footer.php');
