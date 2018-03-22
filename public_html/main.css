@@ -1,0 +1,21 @@
+.thumbnail{        
+    width: 150px; 
+    height: 200x;
+    overflow: auto;
+    padding:0px;
+}
+
+.thumbnail img{
+    // your styles for the image
+    width: 100px;
+    height: 100px;
+    display: block;
+}
+
+.headers{
+   margin-top: 0px;
+}
+
+.Classname td{
+    text-align: center;
+}
