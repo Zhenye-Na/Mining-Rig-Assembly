@@ -18,16 +18,29 @@
                   <span class="icon-bar"></span>
                 </button>
     
-                <a class="navbar-brand" href="components.php">Mining Rigs</a>
+                <a class="navbar-brand" href="index.php">Mining Rigs</a>
             </div>
 
             <div id="navbar" class="collapse navbar-collapse">
               <ul class="nav navbar-nav">
-                <li><a href="index.php">Home</a></li>
+                <li><a href="components.php">All Components</a></li>
               </ul>
               <ul class="nav navbar-nav navbar-right">
-                  <li><a href="login.php">Login</a></li>
-                  <li><a href="register.php">Register</a></li>
+
+                <?php
+                session_start();
+            
+                if($_SESSION['username']){
+                  echo '                  <li><a href="home.php">'.$_SESSION['username'].'</a></li>
+                  <li><a href="logout.php">Logout</a></li>';
+                }else{
+                  echo '                  <li><a href="login.php">Login</a></li>
+                  <li><a href="register.php">Register</a></li>';
+                }
+
+                // <li><a href="login.php">Login</a></li>
+                //  <li><a href="register.php">Register</a></li>
+                ?>
               </ul>
             </div>
         </div>

@@ -7,10 +7,11 @@ include('header.php');
     <div style = "width:30%; margin: 25px auto;">
         <form action="checklogin.php" method="post">
             <div class = "form-group">
-                <input class = "form-control" type = "text" name = "email" placeholder = "email">
+                <input class = "form-control" type = "text" name = "email" placeholder = "email"
+                required = "required">
             </div>
             <div class = "form-group">
-                <input class = "form-control" type = "password" name = "password" placeholder = "password">
+                <input class = "form-control" type = "password" name = "password" placeholder = "password" required = "required">
             </div>
             <div class = "form-group">
                 <button class = "btn btn-lg btn-primary btn-block">Login</button>
@@ -23,3 +24,4 @@ include('header.php');
 <?php
 include('footer');
 ?>
+

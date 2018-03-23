@@ -10,6 +10,23 @@ include('header.php');
 	}
 	$email = $_SESSION['email']; //assigns user value
 	?>
+
+
+<?php   //Create(Account.email, Setup.Setid)  Includes(Setup.Setid, Component.name), Component(Name, Manufacturer, Price)
+/*require("db.php");
+$query = "SELECT Component.Name as name, Component.Manufacturer as manufacturer, Component.Price as price, image_url?
+          FROM Create as c1, Includes as i1, Component as c2
+          WHERE Create.Setup.Setid = Includes.Setup.Setid
+            AND Create.Account.email = $email    <- If possible here
+            AND Includes.Component.name = Component.Name
+
+
+          ;";
+$result = $mysqli->query($query) or die($mysqli->error);
+*/
+?>
+
+
     <div class = "container">
     	<div class = "text-center" style = "padding-bottom: 30px">
 	    <a class = "btn btn-primary btn-lg"href="add_setup.php">Create Your Setup</a>
@@ -20,15 +37,13 @@ include('header.php');
         	<h2>SetUP#1</h2>
         	<!-- <% campgrounds.forEach(function(campground){ %> -->
 		    <div class="row text-center" style="display:flex; flex-wrap: wrap;">
+		    	<?php while($row = $result->fetch_assoc()) { ?>
 	            <div class = "col-md-3 col-lg-2 col-sm-6">
 	                <div class = "thumbnail" >
-	                    <img src = "https://motherboardsforgaming.com/wp-content/uploads/2015/02/ASUS-SABERTOOTH-990FX1.jpg" >
+                        <?php echo '<img src='.$row['image_url'].'>'; ?>
 	                    <div class = "caption text-center">
-	                        <h4><!-- <%= campground.name%> -->Mother Board</h4>
+	                        <h4><?php echo $row['name']; ?></h4>
 	                    </div>
-	                    <p>
-	                        <a href="" class = "btn btn-danger">Delete</a>
-	                    </p>
 	                </div>
 	            </div>
 	            <div class = "col-md-3 col-lg-2 col-sm-6">
@@ -37,13 +52,10 @@ include('header.php');
 	                    <div class = "caption text-center">
 	                        <h4><!-- <%= campground.name%> -->CPU</h4>
 	                    </div>
-	                    <p>
-	                        <a href="" class = "btn btn-danger">Delete</a>
-	                    </p>
 	                </div>
 	            </div>
 	        </div>
-	        <a href="" class = "btn btn-success">Add</a>
+	        <a href="setup.php" class = "btn btn-success">Edit</a>
 	    </div>
 
 	    <div class = "container bg-info well well-lg">
@@ -67,13 +79,10 @@ include('header.php');
 	                    <div class = "caption text-center">
 	                        <h4><!-- <%= campground.name%> -->CPU</h4>
 	                    </div>
-	                    <p>
-	                        <a href="" class = "btn btn-danger">Delete</a>
-	                    </p>
 	                </div>
 	            </div>
 	        </div>
-	        <a href="" class = "btn btn-success">Add</a>
+	        <a href="setup.php" class = "btn btn-success">Edit</a>
 	    </div>	
 	
 

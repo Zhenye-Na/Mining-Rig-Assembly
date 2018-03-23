@@ -16,6 +16,7 @@
    margin-top: 0px;
 }
 
-.Classname td{
-    text-align: center;
+.setup{
+	display: flex; 
+	flex-wrap: wrap;"
 }
