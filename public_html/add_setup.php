@@ -43,7 +43,58 @@ function myFunction2(value) {
     document.body.appendChild(form);
     form.submit();
 }
-function submit() {
+
+function myFunction3(part_name) {
+    
+    selected = document.getElementById(part_name);
+    table = document.getElementById(part_name.concat("_table"));
+    
+    selected.value = "NULL";
+    
+    if (selected.value === "NULL") {
+        table.style.display = "block";
+    } else {
+        table.style.display = "none";
+    }
+    
+    document.getElementById("selected_table").style.display = "block";
+    document.getElementById(part_name.concat("_selected_display")).style.display = "none";
+
+    
+    mb = document.getElementById("mb").value
+    cpu = document.getElementById("cpu").value
+    gpu = document.getElementById("gpu").value
+    ram = document.getElementById("ram").value
+    psu = document.getElementById("psu").value
+    if (mb == "NULL" || cpu == "NULL" || gpu == "NULL" || ram == "NULL" || psu == "NULL") {
+        document.getElementById("submit").style.display = "none";
+    }
+    if (mb == "NULL" && cpu == "NULL" && gpu == "NULL" && ram == "NULL" && psu == "NULL") {
+        document.getElementById("selected_table").style.display = "none";
+    }
+}
+
+
+function myFunction4(value) {
+    method = "post";
+
+    var form = document.createElement("form");
+    form.setAttribute("method", method);
+    form.setAttribute("action", "info.php");
+    form.setAttribute("target", "_blank");
+
+    var name = document.createElement("input");
+    name.setAttribute("type", "hidden");
+    name.setAttribute("name", "name");
+    name.setAttribute("value", value);
+    form.appendChild(name);
+    
+    document.body.appendChild(form);
+    form.submit();
+}
+
+
+function submit(setID) {
     method = "post";
 
     var form = document.createElement("form");
@@ -79,6 +130,12 @@ function submit() {
     psu.setAttribute("name", "psu");
     psu.setAttribute("value", document.getElementById("psu").value);
     form.appendChild(psu);
+    
+    var SetID = document.createElement("input");
+    SetID.setAttribute("type", "hidden");
+    SetID.setAttribute("name", "setID");
+    SetID.setAttribute("value", setID);
+    form.appendChild(SetID);
 
     document.body.appendChild(form);
     form.submit();
@@ -88,6 +145,7 @@ function submit() {
 
 <?php
 include('header.php');
+$setid = $_POST['setID'];
 ?>
 
 <?php
@@ -97,23 +155,6 @@ ini_set('display_errors', 1);
 
 <?php
 require("db.php");
-$setid = $_POST['setID'];
-if(!$setid){
-    echo $setid;
-}
-$result = $mysqli->query("SELECT * FROM includes where setID = '$setid'");
-$set = $result->fetch_row();
-echo $set;
-$result2 = $mysqli->query("SELECT name, image_url FROM components where name='".$set['cpu_name']."'");
-$row = $result2->fetch_row();
-echo "<script type='text/javascript'>
-      myFunction('".$row['name']."', 'cpu', '".$row['image_url']."');
-     </script>"
-;
-
-$query = "SELECT * FROM components where name IN (SELECT name 
-                                       FROM mb);";
-$result = $mysqli->query($query) or die($mysqli->error);
 ?>
 
 
@@ -155,7 +196,7 @@ $result = $mysqli->query($query) or die($mysqli->error);
 </style>
 
 <div id = "selected_table" class = "container bg-info well well-lg">
-        	<h2>Selected Commponent</h2>
+        	<h2>Selected Component</h2>
         	<!-- <% campgrounds.forEach(function(campground){ %> -->
 		    <div class="row text-center" style="display:flex; flex-wrap: wrap;">
 		        
@@ -165,6 +206,9 @@ $result = $mysqli->query($query) or die($mysqli->error);
 	                    <div class = "caption text-center">
 	                        <h4 id = "mb_selected_text"></h4>
 	                    </div>
+	                    <p>
+                            <?php echo "<a class = \"btn btn-danger\" onclick=\"myFunction3('mb')\">Remove</a>"; ?>
+                        </p>
 	                </div>
 	            </div>
 	            
@@ -174,6 +218,9 @@ $result = $mysqli->query($query) or die($mysqli->error);
 	                    <div class = "caption text-center">
 	                        <h4 id = "cpu_selected_text"></h4>
 	                    </div>
+	                    <p>
+                            <?php echo "<a class = \"btn btn-danger\" onclick=\"myFunction3('cpu')\">Remove</a>"; ?>
+                        </p>
 	                </div>
 	            </div>
 	            
@@ -183,6 +230,9 @@ $result = $mysqli->query($query) or die($mysqli->error);
 	                    <div class = "caption text-center">
 	                        <h4 id = "gpu_selected_text"></h4>
 	                    </div>
+	                    <p>
+                            <?php echo "<a class = \"btn btn-danger\" onclick=\"myFunction3('gpu')\">Remove</a>"; ?>
+                        </p>
 	                </div>
 	            </div>
 	            
@@ -192,6 +242,9 @@ $result = $mysqli->query($query) or die($mysqli->error);
 	                    <div class = "caption text-center">
 	                        <h4 id = "ram_selected_text"></h4>
 	                    </div>
+	                    <p>
+                            <?php echo "<a class = \"btn btn-danger\" onclick=\"myFunction3('ram')\">Remove</a>"; ?>
+                        </p>
 	                </div>
 	            </div>
 	            
@@ -201,12 +254,21 @@ $result = $mysqli->query($query) or die($mysqli->error);
 	                    <div class = "caption text-center">
 	                        <h4 id = "psu_selected_text"></h4>
 	                    </div>
+	                    <p>
+                            <?php echo "<a class = \"btn btn-danger\" onclick=\"myFunction3('psu')\">Remove</a>"; ?>
+                        </p>
 	                </div>
 	            </div>
 	            
 	        </div>
-	        <a id = "submit" onclick="submit()" class = "btn btn-success">Complete</a>
+	        <a id = "submit" onclick="submit(<?php echo $setid ;?>)" class = "btn btn-success">Complete</a>
 	    </div>
+
+<?php
+$query = "SELECT * FROM components where name IN (SELECT name 
+                                       FROM mb);";
+$result = $mysqli->query($query) or die($mysqli->error);
+?>
 
 <div id = "mb_table" class = "container bg-info well well-lg">
 	<h2>MotherBoard</h2>
@@ -221,7 +283,7 @@ $result = $mysqli->query($query) or die($mysqli->error);
                 <p>
                     <?php echo "<a class = \"btn btn-success\" onclick=\"myFunction('".$row['name']."','mb','".$row['image_url']."')\">Add</a>"; ?>
                     
-                    <?php echo "<a class = \"btn btn-success\" onclick=\"myFunction2('".$row['name']."')\">Info</a>"; ?>
+                    <?php echo "<a class = \"btn btn-success\" onclick=\"myFunction4('".$row['name']."')\">Info</a>"; ?>
                 </p>
             </div>
         </div>
@@ -247,7 +309,7 @@ $result = $mysqli->query($query) or die($mysqli->error);
                 </div>
                 <p>
                     <?php echo "<a class = \"btn btn-success\" onclick=\"myFunction('".$row['name']."','cpu','".$row['image_url']."')\">Add</a>"; ?>
-                    <?php echo "<a class = \"btn btn-success\" onclick=\"myFunction2('".$row['name']."')\">Info</a>"; ?>
+                    <?php echo "<a class = \"btn btn-success\" onclick=\"myFunction4('".$row['name']."')\">Info</a>"; ?>
                 </p>
             </div>
         </div>
@@ -273,7 +335,7 @@ $result = $mysqli->query($query) or die($mysqli->error);
                 </div>
                 <p>
                     <?php echo "<a class = \"btn btn-success\" onclick=\"myFunction('".$row['name']."','gpu','".$row['image_url']."')\">Add</a>"; ?>
-                    <?php echo "<a class = \"btn btn-success\" onclick=\"myFunction2('".$row['name']."')\">Info</a>"; ?>
+                    <?php echo "<a class = \"btn btn-success\" onclick=\"myFunction4('".$row['name']."')\">Info</a>"; ?>
                 </p>
             </div>
         </div>
@@ -299,7 +361,7 @@ $result = $mysqli->query($query) or die($mysqli->error);
                 </div>
                 <p>
                     <?php echo "<a class = \"btn btn-success\" onclick=\"myFunction('".$row['name']."','ram','".$row['image_url']."')\">Add</a>"; ?>
-                    <?php echo "<a class = \"btn btn-success\" onclick=\"myFunction2('".$row['name']."')\">Info</a>"; ?>
+                    <?php echo "<a class = \"btn btn-success\" onclick=\"myFunction4('".$row['name']."')\">Info</a>"; ?>
                 </p>
             </div>
         </div>
@@ -325,7 +387,7 @@ $result = $mysqli->query($query) or die($mysqli->error);
                 </div>
                 <p>
                     <?php echo "<a class = \"btn btn-success\" onclick=\"myFunction('".$row['name']."','psu','".$row['image_url']."')\">Add</a>"; ?>
-                    <?php echo "<a class = \"btn btn-success\" onclick=\"myFunction2('".$row['name']."')\">Info</a>"; ?>
+                    <?php echo "<a class = \"btn btn-success\" onclick=\"myFunction4('".$row['name']."')\">Info</a>"; ?>
                 </p>
             </div>
         </div>
@@ -333,6 +395,53 @@ $result = $mysqli->query($query) or die($mysqli->error);
      </div>
 </div>
 
+<?php
+
+
+
+$result = $mysqli->query("SELECT * FROM includes where setID = '$setid'");
+$set = $result->fetch_assoc();
+//cpu
+$result2 = $mysqli->query("SELECT name, image_url FROM components where name='".$set['cpu_name']."'");
+$row = $result2->fetch_assoc();
+if($row['name']!=null){
+echo "<script>
+      myFunction('".$row['name']."', 'cpu', '".$row['image_url']."');
+     </script>";
+}
+//mb
+$result2 = $mysqli->query("SELECT name, image_url FROM components where name='".$set['mb_name']."'");
+$row = $result2->fetch_assoc();
+if($row['name']!=null){
+echo "<script>
+      myFunction('".$row['name']."', 'mb', '".$row['image_url']."');
+     </script>";
+}
+//gpu
+$result2 = $mysqli->query("SELECT name, image_url FROM components where name='".$set['gpu_name']."'");
+$row = $result2->fetch_assoc();
+if($row['name']!=null){
+echo "<script>
+      myFunction('".$row['name']."', 'gpu', '".$row['image_url']."');
+     </script>";
+}
+//ram
+$result2 = $mysqli->query("SELECT name, image_url FROM components where name='".$set['ram_name']."'");
+$row = $result2->fetch_assoc();
+if($row['name']!=null){
+echo "<script>
+      myFunction('".$row['name']."', 'ram', '".$row['image_url']."');
+     </script>";
+}
+//psu
+$result2 = $mysqli->query("SELECT name, image_url FROM components where name='".$set['psu_name']."'");
+$row = $result2->fetch_assoc();
+if($row['name']!=null){
+echo "<script>
+      myFunction('".$row['name']."', 'psu', '".$row['image_url']."');
+     </script>";
+}
+?>
 <?php
 include('footer.php');
 ?>

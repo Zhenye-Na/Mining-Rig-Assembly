@@ -17,7 +17,7 @@ include('header.php');
                 <button class = "btn btn-lg btn-primary btn-block">Login</button>
             </div>
         </form>
-        <a href = "components.php">Go to All Components</a>
+        
     </div>
 </div>
 

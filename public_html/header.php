@@ -2,7 +2,7 @@
 <html>
 <head>
 	<title>
-	    Mining Rigs -- Customize Your Rigs
+	    Mining Rigs Assembly -- Customize Your Rigs
 	</title>
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 	<link rel="stylesheet" href="main.css"
@@ -18,7 +18,7 @@
                   <span class="icon-bar"></span>
                 </button>
     
-                <a class="navbar-brand" href="index.php">Mining Rigs</a>
+                <a class="navbar-brand" href="index.php">Mining Rigs Assembly</a>
             </div>
 
             <div id="navbar" class="collapse navbar-collapse">

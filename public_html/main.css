@@ -1,12 +1,11 @@
 .thumbnail{        
     width: 150px; 
-    height: 200x;
+    height: 200px;
     overflow: auto;
     padding:0px;
 }
 
 .thumbnail img{
-    // your styles for the image
     width: 100px;
     height: 100px;
     display: block;
@@ -16,8 +15,59 @@
    margin-top: 0px;
 }
 
-.infoname{
-    width: 150px;
-    height: 100px;
-    display: block;
+table.detail {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 50%;
+    margin-left: 530px;
+    margin-top: 10px;
+}
+
+table.detail td, th {
+    border: 0px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+}
+
+table.detail tr:nth-child(even) {
+    background-color: #dddddd;
+}
+
+
+
+table.button {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 50%;
+    margin-left: 530px;
+    margin-top: 10px;
+}
+
+table.button td, th {
+    border: 0px;
+    text-align: left;
+    padding: 8px;
+}
+
+table.button tr:nth-child(even) {
+    background-color: #dddddd;
+}
+
+table.similar {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 50%;
+    margin-left: 30px;
+    margin-top: 30px;
+}
+
+table.similar td {
+    border: 0px;
+    text-align: left;
+    width: 25%;
+    padding: 4px;
+}
+
+table.similar tr:nth-child(even) {
+    background-color: #dddddd;
 }

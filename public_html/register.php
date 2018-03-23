@@ -21,8 +21,8 @@ include('header.php');
                     <button class = "btn btn-lg btn-primary btn-block">Sign Up</button>
                 </div>
             </form>
-            <a href="index.php">Click here to go back</a>
-            <a href = "components.php">Back to All Components</a>
+            <a href="index.php">Back to home page</a>
+            
         </div>
     </div>
 

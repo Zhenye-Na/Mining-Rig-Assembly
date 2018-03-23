@@ -11,6 +11,7 @@ function myFunction2(value) {
     var form = document.createElement("form");
     form.setAttribute("method", method);
     form.setAttribute("action", "info.php");
+    form.setAttribute("target", "_blank");
 
     var name = document.createElement("input");
     name.setAttribute("type", "hidden");
