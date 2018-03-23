@@ -4,6 +4,13 @@ error_reporting(E_ALL);
 ini_set('display_errors', 1);
 ?>
 
+<style>
+img {
+    float: left;
+}
+</style>
+
+
 
 <?php
 require("db.php");
@@ -19,23 +26,25 @@ $result = $mysqli->query($query) or die($mysqli->error);
 
 <div class = "container bg-info well well-lg">
 	<h2>Information</h2>
-    <div class="row text-center" style="display: flex; flex-wrap: wrap;">
+	<p>Detailed information about this component.</p>
+    <div class="col" style="display: flex; flex-wrap: wrap;">
     	<?php while($row = $result->fetch_assoc()) { ?>
-        <div class = "col-xs-1 col-md-1 col-lg-1 col-sm-1">
-            <div class = "thumbnail" >
-                <?php echo '<img src='.$row['image_url'].'>'; ?>
-                <div class = "caption text-center">
-                    <h4><?php echo $row['name']; ?></h4>
-                    <h4><?php echo $row['price']; ?></h4>
-                    <h4><?php echo $row['manufacturer']; ?></h4>
-                    <h4><?php echo $row['description']; ?></h4>
-                    
-                </div>
-                <p>
-                    <?php echo "<a href= ".$row['amazon_url']." class = \"btn btn-success\">More information here!</a>"; ?>
-                </p>
-            </div>
+        
+        <div class = "img-rounded" alt= \"echo $row['name']\" >
+            <?php echo '<img src='.$row['image_url'].'>'; ?>
         </div>
+        
+    <div class = "infoname">
+        <p class="text-right"><?php echo 'Name: ', $row['name']; ?></p>
+        <p class="text-right"><?php echo 'Price: ', $row['price']; ?></p>
+        <p class="text-right"><?php echo 'Manufacturer: ', $row['manufacturer']; ?></p>
+        <p class="text-right"><?php echo 'Description: ', $row['description']; ?></p>
+    </div>
+    </div>
+    <div class = "text-center">
+        <p>
+            <?php echo "<a href= ".$row['amazon_url']." class = \"btn btn-success\">More information here!</a>"; ?>
+        </p>
+    </div>
         <?php } ?>
-     </div>
 </div>

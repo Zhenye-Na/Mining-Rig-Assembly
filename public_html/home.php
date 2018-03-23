@@ -1,89 +1,91 @@
 <?php
-include('header.php');
+session_start(); //starts the session
+if($_SESSION['username']){ //checks if user is logged in
+}
+else{
+	header("location:login.php"); // redirects if user is not logged in
+}
+$username = $_SESSION['username']; //assigns user value
 ?>
-    <?php
-	session_start(); //starts the session
-	if($_SESSION['email']){ //checks if user is logged in
-	}
-	else{
-		header("location:login.php"); // redirects if user is not logged in
-	}
-	$email = $_SESSION['email']; //assigns user value
-	?>
+<script>
+    function myFunction2(value) {
+    method = "post";
 
+    var form = document.createElement("form");
+    form.setAttribute("method", method);
+    form.setAttribute("action", "add_setup.php");
 
-<?php   //Create(Account.email, Setup.Setid)  Includes(Setup.Setid, Component.name), Component(Name, Manufacturer, Price)
-/*require("db.php");
-$query = "SELECT Component.Name as name, Component.Manufacturer as manufacturer, Component.Price as price, image_url?
-          FROM Create as c1, Includes as i1, Component as c2
-          WHERE Create.Setup.Setid = Includes.Setup.Setid
-            AND Create.Account.email = $email    <- If possible here
-            AND Includes.Component.name = Component.Name
+    var name = document.createElement("input");
+    name.setAttribute("type", "hidden");
+    name.setAttribute("name", "setID");
+    name.setAttribute("value", value);
+    form.appendChild(name);
+    
+    document.body.appendChild(form);
+    form.submit();
+}
+</script>
 
-
-          ;";
-$result = $mysqli->query($query) or die($mysqli->error);
-*/
+<?php
+include('header.php');
 ?>
 
 
     <div class = "container">
     	<div class = "text-center" style = "padding-bottom: 30px">
-	    <a class = "btn btn-primary btn-lg"href="add_setup.php">Create Your Setup</a>
-	</div>
 
-        
-        <div class = "container bg-info well well-lg">
-        	<h2>SetUP#1</h2>
-        	<!-- <% campgrounds.forEach(function(campground){ %> -->
-		    <div class="row text-center" style="display:flex; flex-wrap: wrap;">
-		    	<?php while($row = $result->fetch_assoc()) { ?>
-	            <div class = "col-md-3 col-lg-2 col-sm-6">
-	                <div class = "thumbnail" >
-                        <?php echo '<img src='.$row['image_url'].'>'; ?>
-	                    <div class = "caption text-center">
-	                        <h4><?php echo $row['name']; ?></h4>
-	                    </div>
-	                </div>
-	            </div>
-	            <div class = "col-md-3 col-lg-2 col-sm-6">
-	                <div class = "thumbnail">
-	                    <img src = "http://images.wisegeek.com/cpu-processor.jpg">
-	                    <div class = "caption text-center">
-	                        <h4><!-- <%= campground.name%> -->CPU</h4>
-	                    </div>
-	                </div>
-	            </div>
-	        </div>
-	        <a href="setup.php" class = "btn btn-success">Edit</a>
+        	    <a class = "btn btn-primary btn-lg"href="add_setup.php" >Create Your Setup</a>
+    	 
 	    </div>
 
-	    <div class = "container bg-info well well-lg">
-        	<h2>SetUP#2</h2>
-        	<!-- <% campgrounds.forEach(function(campground){ %> -->
-		    <div class="row text-center" style="display:flex; flex-wrap: wrap;">
-	            <div class = "col-md-3 col-lg-2 col-sm-6">
-	                <div class = "thumbnail">
-	                    <img src = "https://motherboardsforgaming.com/wp-content/uploads/2015/02/ASUS-SABERTOOTH-990FX1.jpg">
-	                    <div class = "caption text-center">
-	                        <h4><!-- <%= campground.name%> -->Mother Board</h4>
-	                    </div>
-	                    <p>
-	                        <a href="" class = "btn btn-danger">Delete</a>
-	                    </p>
-	                </div>
-	            </div>
-	            <div class = "col-md-3 col-lg-2 col-sm-6">
-	                <div class = "thumbnail">
-	                    <img src = "http://images.wisegeek.com/cpu-processor.jpg">
-	                    <div class = "caption text-center">
-	                        <h4><!-- <%= campground.name%> -->CPU</h4>
-	                    </div>
-	                </div>
-	            </div>
-	        </div>
-	        <a href="setup.php" class = "btn btn-success">Edit</a>
-	    </div>	
+
+
+ <?php
+ // //select all the setups of user and return
+ //      select * from includes where setID in
+ //     (select setID from creates where email = $username;??)
+ //     setID motherboard psu mb ram
+require("db.php");
+$query = "SELECT * FROM includes where setID IN (SELECT setID 
+                                       FROM creates
+                                       where email = '$username');";
+// $result = mysqli_query($con,"SELECT `note` FROM `glogin_users` WHERE email = '$email'");
+$result = $mysqli->query($query) or die($mysqli->error);
+?>
+<!-- $order = 0;
+//for each row:
+     for each attribute(component):??
+         show if not null -->
+    <?php $order = 1;?>
+    <?php while($row = $result->fetch_assoc()) { ?>
+    <div class = "container bg-info well well-lg">
+    	<h2>SetUP#<?php echo $order; ?></h2>
+	    <div class="row text-center" style="display:flex; flex-wrap: wrap;">
+	    	<?php foreach ($row as $column=>$value){ ?>
+	    	<?php if(!empty($value)){?>
+            <div class = "col-md-3 col-lg-2 col-sm-6">
+                <div class = "thumbnail" >
+                    <?php
+                    require("db.php");
+                    $item_query = "SELECT * FROM components where name = '$value';";
+                    $item_result = $mysqli->query($item_query) or die($mysqli->error);
+                    while($item = $item_result->fetch_assoc()) {
+                       echo '<img src='.$item['image_url'].'>';
+                    ?>
+                    <div class = "caption text-center">
+                        <h4><?php echo $item['name']; ?></h4>
+                    </div>
+                    <?php }?>
+                </div>
+            </div>
+            <?php } ?>
+            <?php } ?>
+        </div>
+        <?php echo "<a class = \"btn btn-success\" onclick=\"myFunction2('".$row['setID']."')\">Edit</a>"; ?>
+        <?php $order += 1?>
+    </div>
+    <?php } ?>
+
 	
 
 <?php

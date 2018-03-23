@@ -16,7 +16,8 @@
    margin-top: 0px;
 }
 
-.setup{
-	display: flex; 
-	flex-wrap: wrap;"
+.infoname{
+    width: 150px;
+    height: 100px;
+    display: block;
 }
