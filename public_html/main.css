@@ -1,6 +1,6 @@
 .thumbnail{        
     width: 150px; 
-    height: 200px;
+    height: auto;
     overflow: auto;
     padding:0px;
 }
