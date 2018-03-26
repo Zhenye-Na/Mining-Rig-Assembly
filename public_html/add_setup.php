@@ -196,73 +196,118 @@ require("db.php");
 </style>
 
 <div id = "selected_table" class = "container bg-info well well-lg">
-        	<h2>Selected Component</h2>
-        	<!-- <% campgrounds.forEach(function(campground){ %> -->
-		    <div class="row text-center" style="display:flex; flex-wrap: wrap;">
-		        
-	            <div id = "mb_selected_display" class = "col-md-3 col-lg-2 col-sm-6">
-	                <div class = "thumbnail" >
-	                    <img id = "mb_selected_img" src = "" >
-	                    <div class = "caption text-center">
-	                        <h4 id = "mb_selected_text"></h4>
-	                    </div>
-	                    <p>
+            <h2>Selected Component</h2>
+            <!-- <% campgrounds.forEach(function(campground){ %> -->
+            <div class="row text-center" style="display:flex; flex-wrap: wrap;">
+                
+                <div id = "mb_selected_display" class = "col-md-3 col-lg-2 col-sm-6">
+                    <div class = "thumbnail" >
+                        <img id = "mb_selected_img" src = "" >
+                        <div class = "caption text-center">
+                            <h4 id = "mb_selected_text"></h4>
+                        </div>
+                        <p>
                             <?php echo "<a class = \"btn btn-danger\" onclick=\"myFunction3('mb')\">Remove</a>"; ?>
                         </p>
-	                </div>
-	            </div>
-	            
-	            <div id = "cpu_selected_display" class = "col-md-3 col-lg-2 col-sm-6">
-	                <div class = "thumbnail" >
-	                    <img id = "cpu_selected_img" src = "" >
-	                    <div class = "caption text-center">
-	                        <h4 id = "cpu_selected_text"></h4>
-	                    </div>
-	                    <p>
+                    </div>
+                </div>
+                
+                <div id = "cpu_selected_display" class = "col-md-3 col-lg-2 col-sm-6">
+                    <div class = "thumbnail" >
+                        <img id = "cpu_selected_img" src = "" >
+                        <div class = "caption text-center">
+                            <h4 id = "cpu_selected_text"></h4>
+                        </div>
+                        <p>
                             <?php echo "<a class = \"btn btn-danger\" onclick=\"myFunction3('cpu')\">Remove</a>"; ?>
                         </p>
-	                </div>
-	            </div>
-	            
-	            <div id = "gpu_selected_display" class = "col-md-3 col-lg-2 col-sm-6">
-	                <div class = "thumbnail" >
-	                    <img id = "gpu_selected_img" src = "" >
-	                    <div class = "caption text-center">
-	                        <h4 id = "gpu_selected_text"></h4>
-	                    </div>
-	                    <p>
+                    </div>
+                </div>
+                
+                <div id = "gpu_selected_display" class = "col-md-3 col-lg-2 col-sm-6">
+                    <div class = "thumbnail" >
+                        <img id = "gpu_selected_img" src = "" >
+                        <div class = "caption text-center">
+                            <h4 id = "gpu_selected_text"></h4>
+                        </div>
+                        <p>
                             <?php echo "<a class = \"btn btn-danger\" onclick=\"myFunction3('gpu')\">Remove</a>"; ?>
                         </p>
-	                </div>
-	            </div>
-	            
-	            <div id = "ram_selected_display" class = "col-md-3 col-lg-2 col-sm-6">
-	                <div class = "thumbnail" >
-	                    <img id = "ram_selected_img" src = "" >
-	                    <div class = "caption text-center">
-	                        <h4 id = "ram_selected_text"></h4>
-	                    </div>
-	                    <p>
+                    </div>
+                </div>
+                
+                <div id = "ram_selected_display" class = "col-md-3 col-lg-2 col-sm-6">
+                    <div class = "thumbnail" >
+                        <img id = "ram_selected_img" src = "" >
+                        <div class = "caption text-center">
+                            <h4 id = "ram_selected_text"></h4>
+                        </div>
+                        <p>
                             <?php echo "<a class = \"btn btn-danger\" onclick=\"myFunction3('ram')\">Remove</a>"; ?>
                         </p>
-	                </div>
-	            </div>
-	            
-	            <div id = "psu_selected_display" class = "col-md-3 col-lg-2 col-sm-6">
-	                <div class = "thumbnail" >
-	                    <img id = "psu_selected_img" src = "" >
-	                    <div class = "caption text-center">
-	                        <h4 id = "psu_selected_text"></h4>
-	                    </div>
-	                    <p>
+                    </div>
+                </div>
+                
+                <div id = "psu_selected_display" class = "col-md-3 col-lg-2 col-sm-6">
+                    <div class = "thumbnail" >
+                        <img id = "psu_selected_img" src = "" >
+                        <div class = "caption text-center">
+                            <h4 id = "psu_selected_text"></h4>
+                        </div>
+                        <p>
                             <?php echo "<a class = \"btn btn-danger\" onclick=\"myFunction3('psu')\">Remove</a>"; ?>
                         </p>
-	                </div>
-	            </div>
-	            
-	        </div>
-	        <a id = "submit" onclick="submit(<?php echo $setid ;?>)" class = "btn btn-success">Complete</a>
-	    </div>
+                    </div>
+                </div>
+                
+            </div>
+            <a id = "submit" onclick="submit(<?php echo $setid ;?>)" class = "btn btn-success">Complete</a>
+        </div>
+
+<?php
+$email = $_SESSION['username'];
+$query = "SELECT * FROM components WHERE name IN (
+SELECT name FROM (
+(SELECT name, MAX(c1) FROM (SELECT mb_name as name, COUNT(mb_name) AS c1 FROM creates,includes  WHERE creates.setID=includes.setID AND creates.email=$email GROUP BY mb_name ORDER BY c1 DESC)t1)
+UNION
+(SELECT name, MAX(c1) FROM (SELECT cpu_name as name, COUNT(cpu_name) AS c1 FROM creates,includes  WHERE creates.setID=includes.setID AND creates.email=$email GROUP BY cpu_name ORDER BY c1 DESC)t2)
+UNION
+(SELECT name, MAX(c1) FROM (SELECT gpu_name as name, COUNT(gpu_name) AS c1 FROM creates,includes  WHERE creates.setID=includes.setID AND creates.email=$email GROUP BY gpu_name ORDER BY c1 DESC)t3)
+UNION
+(SELECT name, MAX(c1) FROM (SELECT ram_name as name, COUNT(ram_name) AS c1 FROM creates,includes  WHERE creates.setID=includes.setID AND creates.email=$email GROUP BY ram_name ORDER BY c1 DESC)t4)
+UNION
+(SELECT name, MAX(c1) FROM (SELECT psu_name as name, COUNT(psu_name) AS c1 FROM creates,includes  WHERE creates.setID=includes.setID AND creates.email=$email GROUP BY psu_name ORDER BY c1 DESC)t5)) namet);";
+
+$result = $mysqli->query($query) or die($mysqli->error);
+$component_array = array("mb", "cpu", "gpu", "ram", "psu");
+$component_index = 0;
+?>
+
+<div id = "user_favorite" class = "container bg-info well well-lg">
+    <h2>User Favorite</h2>
+    <!-- <% campgrounds.forEach(function(campground){ %> -->
+    <div class="row text-center" style="display:flex; flex-wrap: wrap;">
+                
+        <?php while($row = $result->fetch_assoc()) { ?>
+        <div class = "col-md-3 col-lg-2 col-sm-6">
+            <div class = "thumbnail" >
+                <?php echo '<img src='.$row['image_url'].'>'; ?>
+                <div class = "caption text-center">
+                    <h4><?php echo $row['name']; ?></h4>
+                </div>
+                <p>
+                    <?php echo "<a class = \"btn btn-success\" onclick=\"myFunction('".$row['name']."','$component_array[$component_index]','".$row['image_url']."')\">Add</a>";
+                    $component_index = $component_index + 1; ?>
+                    
+                    <?php echo "<a class = \"btn btn-success\" onclick=\"myFunction4('".$row['name']."')\">Info</a>"; ?>
+                </p>
+            </div>
+        </div>
+        <?php } ?>
+                
+    </div>
+    <a id = "submit" onclick="submit(<?php echo $setid ;?>)" class = "btn btn-success">Complete</a>
+</div>
 
 <?php
 $query = "SELECT * FROM components where name IN (SELECT name 
@@ -271,9 +316,9 @@ $result = $mysqli->query($query) or die($mysqli->error);
 ?>
 
 <div id = "mb_table" class = "container bg-info well well-lg">
-	<h2>MotherBoard</h2>
+    <h2>MotherBoard</h2>
     <div class="row text-center" style="display:flex; flex-wrap: wrap;">
-    	<?php while($row = $result->fetch_assoc()) { ?>
+        <?php while($row = $result->fetch_assoc()) { ?>
         <div class = "col-md-3 col-lg-2 col-sm-6">
             <div class = "thumbnail" >
                 <?php echo '<img src='.$row['image_url'].'>'; ?>
@@ -298,9 +343,9 @@ $result = $mysqli->query($query) or die($mysqli->error);
 ?>
 
 <div id = "cpu_table" class = "container bg-info well well-lg">
-	<h2>CPU</h2>
+    <h2>CPU</h2>
     <div class="row text-center" style="display:flex; flex-wrap: wrap;">
-    	<?php while($row = $result->fetch_assoc()) { ?>
+        <?php while($row = $result->fetch_assoc()) { ?>
         <div class = "col-md-3 col-lg-2 col-sm-6">
             <div class = "thumbnail" >
                 <?php echo '<img src='.$row['image_url'].'>'; ?>
@@ -324,9 +369,9 @@ $result = $mysqli->query($query) or die($mysqli->error);
 ?>
 
 <div id = "gpu_table" class = "container bg-info well well-lg">
-	<h2>GPU</h2>
+    <h2>GPU</h2>
     <div class="row text-center" style="display:flex; flex-wrap: wrap;">
-    	<?php while($row = $result->fetch_assoc()) { ?>
+        <?php while($row = $result->fetch_assoc()) { ?>
         <div class = "col-md-3 col-lg-2 col-sm-6">
             <div class = "thumbnail" >
                 <?php echo '<img src='.$row['image_url'].'>'; ?>
@@ -350,9 +395,9 @@ $result = $mysqli->query($query) or die($mysqli->error);
 ?>
 
 <div id = "ram_table" class = "container bg-info well well-lg">
-	<h2>RAM</h2>
+    <h2>RAM</h2>
     <div class="row text-center" style="display:flex; flex-wrap: wrap;">
-    	<?php while($row = $result->fetch_assoc()) { ?>
+        <?php while($row = $result->fetch_assoc()) { ?>
         <div class = "col-md-3 col-lg-2 col-sm-6">
             <div class = "thumbnail" >
                 <?php echo '<img src='.$row['image_url'].'>'; ?>
@@ -376,9 +421,9 @@ $result = $mysqli->query($query) or die($mysqli->error);
 ?>
 
 <div id = "psu_table" class = "container bg-info well well-lg">
-	<h2>Power Supply</h2>
+    <h2>Power Supply</h2>
     <div class="row text-center" style="display:flex; flex-wrap: wrap;">
-    	<?php while($row = $result->fetch_assoc()) { ?>
+        <?php while($row = $result->fetch_assoc()) { ?>
         <div class = "col-md-3 col-lg-2 col-sm-6">
             <div class = "thumbnail" >
                 <?php echo '<img src='.$row['image_url'].'>'; ?>
