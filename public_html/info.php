@@ -7,18 +7,22 @@ ini_set('display_errors', 1);
 <style>
 img {
     float: left;
+    width: 400px;
+    height: auto;
 }
 </style>
 
 
 
-
 <?php
-// session_start(); //starts the session
+//session_start(); //starts the session
 if($_SESSION['username']){ //checks if user is logged in
 }
 else{
-	header("location:login.php"); // redirects if user is not logged in
+    //Add pop-ups for users who did not login, redirect to the login.php
+    echo "<script>alert('Please first log in, then see the detail of this component!');</script>";
+    Print '<script>window.location.assign("login.php");</script>';
+    //header("location:login.php"); // redirects if user is not logged in
 }
 $username = $_SESSION['username']; //assigns user value
 ?>
@@ -32,9 +36,21 @@ $name = $mysqli->real_escape_string($_POST['name']);
 $query = "SELECT *
           FROM components
           WHERE name = '$name';";
-$result = $mysqli->query($query) or die($mysqli->error);
-?>
+// $result = $mysqli->query($query) or die($mysqli->error);
+$result = mysqli_query($mysqli, $query) or die($mysqli->error);
 
+
+//advanced query
+$advanced_query = "SELECT COUNT(*) as c1 FROM (SELECT DISTINCT email FROM creates,includes WHERE creates.setID=includes.setID AND (includes.cpu_name='$name' OR includes.gpu_name='$name' OR includes.ram_name='$name' OR includes.psu_name='$name' OR includes.mb_name='$name') ) t1;";
+// $advanced_result = $mysqli->query($advanced_query) or die($mysqli->error);
+
+$advanced_result = mysqli_query($mysqli, $advanced_query) or die($mysqli->error);
+
+//similar components query
+
+
+
+?>
 
 
 <script>
@@ -59,10 +75,10 @@ $result = $mysqli->query($query) or die($mysqli->error);
 
 
 <div class = "container bg-info well well-lg">
-	<!--<h2>Information</h2>-->
-	<!--<p>Detailed information about this component.</p>-->
+    <!--<h2>Information</h2>-->
+    <!--<p>Detailed information about this component.</p>-->
     <div class="container" style="display: flex; flex-wrap: wrap;">
-    	<?php while($row = $result->fetch_assoc()) { ?>
+        <?php while($row = mysqli_fetch_array($result)) { ?>
         
         <div class = "img-rounded" >
             <?php echo '<img src='.$row['image_url'].'>'; ?>
@@ -84,6 +100,11 @@ $result = $mysqli->query($query) or die($mysqli->error);
                         <td> <strong>Description: </strong></td>
                         <td> <?php echo $row['description'] ?> </td>
                     </tr>
+                    <!--advanced query result display-->
+                    <tr>
+                        <td> <strong>Number of user picked this item: </strong></td>
+                        <td> <?php $adv_row = mysqli_fetch_array($advanced_result); echo $adv_row['c1'] ?> </td>
+                    </tr>
                 </table>
             
             
@@ -100,77 +121,76 @@ $result = $mysqli->query($query) or die($mysqli->error);
                 </div>
         <?php } ?>
             </td>
-        	
-	    </tr>
+            
+        </tr>
     </table>
     
 
 </div>
 
+<?php
+mysqli_data_seek($result, 0);
+mysqli_data_seek($advanced_result, 0);
+?>
 
 <div class = "container bg-info well well-lg">
-	<p><strong><font size="4" face="verdana" color=FF5733> Customers who bought this item also bought </font></strong></p>
-	
+    <p><strong><font size="4" face="verdana" color=FF5733> Customers who bought this item also bought </font></strong></p>
+    
 
 
 </div>
 
-<?php
-require("db.php");
-$name = $mysqli->real_escape_string($_POST['name']);
 
-$query = "SELECT *
-          FROM components
-          WHERE name = '$name';";
-$item = $mysqli->query($query) or die($mysqli->error);
-?>
-
-
+<!--Compare with similar items-->
 
 <div class = "container bg-info well well-lg">
-	<p><strong><font size="4" face="verdana" color=FF5733> Compare with similar items </font></strong></p>
-	
+    <p><strong><font size="4" face="verdana" color=FF5733> Compare with similar items </font></strong></p>
+    
     <table class="similar">
+        <!--First column: Component image and name-->
         <tr>
             <td> 
-                <p><strong><font size="5" >  </font></strong></p>
+                <p> Nothing will show here </strong></p>
             </td>
             
-            <?php $row = $item->fetch_assoc() ?>
+            
+            <!--First column -> Indicates this component-->
+            <?php while($row = mysqli_fetch_array($result)) { ?>
+            
             <td > 
-            <div class = "thumbnail">
-                <?php echo "<img src='" . $row['image_url'] . "' height='130' width='150'> "; ?>
-                
-            </div>
+                <div class = "thumbnail">
+                    <?php echo "<img src='" . $row['image_url'] . "' height='130' width='150'> "; ?>
+                    
+                </div>
                 <p> <?php echo $row['name'] ?> </p>
             </td>
             
-            <?php $row = $item->fetch_assoc() ?>
+            <!--Second column -> Indicates similar object 1 name-->
             <td> 
-                <p><strong> <?php echo $row['name'] ?> </font></strong></p> 
+                <p> Other components name </p> 
             </td>
             
-            <?php while($row = $result->fetch_assoc()) { ?>
+            <!--Third column -> Indicates similar object 2 name-->
             <td> 
-                <p><strong> <?php echo $row['name'] ?> </font></strong></p> 
+                <p> Other components name </p> 
             </td>
-            <?php } ?>
             
-            <?php while($row = $result->fetch_assoc()) { ?>
+            
+            <!--Fourth column -> Indicates similar object 3 name-->
             <td> 
-                <p><strong> <?php echo $row['name'] ?> </font></strong></p> 
+                <p> Other components name </p> 
             </td>
-            <?php } ?>
+            
             
         </tr>
         
-        
+        <!--Second row : Price-->
         <tr>
             <td> 
                 <p><strong> Price: </strong></p>
             </td>
+
             
-            <?php $row = $item->fetch_assoc() ?>
             <td>
                 <?php echo $row['price'] ?>
             </td>
@@ -192,9 +212,9 @@ $item = $mysqli->query($query) or die($mysqli->error);
                 <p><strong> Manufacturer: </strong></p>
             </td>
             
-            <?php $row = $item->fetch_assoc() ?> 
+            
             <td>
-                <p> <?php echo $row['manufacturer'] ?> </p>
+                <?php echo $row['manufacturer'] ?>
             </td>
                 
             
@@ -208,6 +228,20 @@ $item = $mysqli->query($query) or die($mysqli->error);
         
         </tr>
         
+        <tr>
+            <td> 
+                <strong>Number of user picked this item: </strong>
+            </td>
+            
+            <td>
+                <?php $adv_row = mysqli_fetch_array($advanced_result); echo $adv_row['c1'] ?>
+            </td>
+            
+            <td>
+                
+            </td>
+        </tr>
+            <?php } ?>
     </table>
 
 </div>
