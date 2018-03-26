@@ -24,7 +24,7 @@ else{
     Print '<script>window.location.assign("login.php");</script>';
     //header("location:login.php"); // redirects if user is not logged in
 }
-$username = $_SESSION['username']; //assigns user value
+// $username = $_SESSION['username']; //assigns user value
 ?>
 
 
@@ -47,8 +47,21 @@ $advanced_query = "SELECT COUNT(*) as c1 FROM (SELECT DISTINCT email FROM create
 $advanced_result = mysqli_query($mysqli, $advanced_query) or die($mysqli->error);
 
 //similar components query
+$similar_query = "SELECT c1.*
+                  FROM components as c1
+                  WHERE c1.price - 10 >= (SELECT c2.price
+                                          FROM components as c2
+                                          WHERE name = '$name')
+                    OR  c1.price + 10 <= (SELECT c3.price
+                                          FROM components as c3
+                                          WHERE name = '$name');";
 
+$similar_result = mysqli_query($mysqli, $similar_query) or die($mysqli->error);
 
+// while($var = mysqli_fetch_array($similar_result)) {
+//     echo $var['name'];
+//     echo "<img src='" . $var['image_url'] . "' height='130' width='130'> ";
+// }
 
 ?>
 
@@ -150,7 +163,7 @@ mysqli_data_seek($advanced_result, 0);
         <!--First column: Component image and name-->
         <tr>
             <td> 
-                <p> Nothing will show here </strong></p>
+                <p> </p>
             </td>
             
             
@@ -159,26 +172,41 @@ mysqli_data_seek($advanced_result, 0);
             
             <td > 
                 <div class = "thumbnail">
-                    <?php echo "<img src='" . $row['image_url'] . "' height='130' width='150'> "; ?>
+                    <?php echo "<img src='" . $row['image_url'] . "' height='130' width='130'> "; ?>
                     
                 </div>
                 <p> <?php echo $row['name'] ?> </p>
             </td>
             
             <!--Second column -> Indicates similar object 1 name-->
+            <?php $new_item = mysqli_fetch_array($similar_result) ?>
             <td> 
-                <p> Other components name </p> 
+                <div class = "thumbnail">
+                    <?php echo "<img src='" . $new_item['image_url'] . "' height='130' width='130'> "; ?>
+                    
+                </div>
+                <p> <?php echo $new_item['name'] ?> </p>
             </td>
             
             <!--Third column -> Indicates similar object 2 name-->
+            <?php $new_item = mysqli_fetch_array($similar_result) ?>
             <td> 
-                <p> Other components name </p> 
+                <div class = "thumbnail">
+                    <?php echo "<img src='" . $new_item['image_url'] . "' height='130' width='130'> "; ?>
+                    
+                </div>
+                <p> <?php echo $new_item['name'] ?> </p>
             </td>
             
             
             <!--Fourth column -> Indicates similar object 3 name-->
+            <?php $new_item = mysqli_fetch_array($similar_result) ?>
             <td> 
-                <p> Other components name </p> 
+                <div class = "thumbnail">
+                    <?php echo "<img src='" . $new_item['image_url'] . "' height='130' width='130'> "; ?>
+                    
+                </div>
+                <p> <?php echo $new_item['name'] ?> </p>
             </td>
             
             
@@ -195,18 +223,24 @@ mysqli_data_seek($advanced_result, 0);
                 <?php echo $row['price'] ?>
             </td>
                 
-            
+            <?php $new_item = mysqli_fetch_array($similar_result) ?>
             <td>
-                
+                <?php echo $new_item['price'] ?>
             </td>
             
+            <?php $new_item = mysqli_fetch_array($similar_result) ?>
             <td>
-                
+                <?php echo $new_item['price'] ?>
+            </td>
+            
+            <?php $new_item = mysqli_fetch_array($similar_result) ?>
+            <td>
+                <?php echo $new_item['price'] ?>
             </td>
         
         </tr>
         
-        
+        <!--Third row : Manufacturer-->
         <tr>
             <td> 
                 <p><strong> Manufacturer: </strong></p>
@@ -218,29 +252,70 @@ mysqli_data_seek($advanced_result, 0);
             </td>
                 
             
+            <?php $new_item = mysqli_fetch_array($similar_result) ?>
             <td>
-                
+                <?php echo $new_item['manufacturer'] ?>
             </td>
             
+            <?php $new_item = mysqli_fetch_array($similar_result) ?>
             <td>
-                
+                <?php echo $new_item['manufacturer'] ?>
+            </td>
+            
+            <?php $new_item = mysqli_fetch_array($similar_result) ?>
+            <td>
+                <?php echo $new_item['manufacturer'] ?>
             </td>
         
         </tr>
         
+        
+        
+        <!--Fourth row : Description-->
         <tr>
             <td> 
-                <strong>Number of user picked this item: </strong>
+                <p><strong> Description: </strong></p>
             </td>
             
-            <td>
-                <?php $adv_row = mysqli_fetch_array($advanced_result); echo $adv_row['c1'] ?>
-            </td>
             
             <td>
+                <?php echo $row['description'] ?>
+            </td>
                 
+            
+            <?php $new_item = mysqli_fetch_array($similar_result) ?>
+            <td>
+                <?php echo $new_item['description'] ?>
             </td>
+            
+            <?php $new_item = mysqli_fetch_array($similar_result) ?>
+            <td>
+                <?php echo $new_item['description'] ?>
+            </td>
+            
+            <?php $new_item = mysqli_fetch_array($similar_result) ?>
+            <td>
+                <?php echo $new_item['description'] ?>
+            </td>
+        
         </tr>
+        
+        
+        
+        <!--Fifth row : Number of user picked this item-->
+        <!--<tr>-->
+        <!--    <td> -->
+        <!--        <strong> Number of user picked this item: </strong>-->
+        <!--    </td>-->
+            
+        <!--    <td>-->
+        <!--        <?php $adv_row = mysqli_fetch_array($advanced_result); echo $adv_row['c1'] ?>-->
+        <!--    </td>-->
+            
+        <!--    <td>-->
+        <!--        <?php $adv_row = mysqli_fetch_array($advanced_result); echo $adv_row['c1'] ?>-->
+        <!--    </td>-->
+        <!--</tr>-->
             <?php } ?>
     </table>
 
