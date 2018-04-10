@@ -134,9 +134,13 @@ $similar_result = mysqli_query($mysqli, $similar_query) or die($mysqli->error);
                 </div>
         <?php } ?>
             
-            <div class="fb-share-button" data-href="http://rigassembly.web.engr.illinois.edu/info.php" data-layout="button_count" data-size="small" data-mobile-iframe="true"><a target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Frigassembly.web.engr.illinois.edu%2Finfo.php&amp;src=sdkpreparse" class="fb-xfbml-parse-ignore">Share</a></div>
             
             </td>
+        	
+        	<td>
+                <div class="fb-share-button" data-href="http://rigassembly.web.engr.illinois.edu/info.php" data-layout="button_count" data-size="small" data-mobile-iframe="true"><a target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Frigassembly.web.engr.illinois.edu%2Finfo.php&amp;src=sdkpreparse" class="btn btn-success">Share</a></div>
+        	    
+        	</td>
         	
 	    </tr>
     </table>

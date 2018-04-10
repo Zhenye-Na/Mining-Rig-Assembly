@@ -299,7 +299,7 @@ $component_index = 0;
                     <?php echo "<a class = \"btn btn-success\" onclick=\"myFunction('".$row['name']."','$component_array[$component_index]','".$row['image_url']."')\">Add</a>";
                     $component_index = $component_index + 1; ?>
                     
-                    <?php echo "<a class = \"btn btn-success\" onclick=\"myFunction4('".$row['name']."')\">Info</a>"; ?>
+                    <?php echo "<a class = \"btn btn-info\" onclick=\"myFunction4('".$row['name']."')\">Info</a>"; ?>
                 </p>
             </div>
         </div>

@@ -105,7 +105,7 @@ $result = $mysqli->query($query) or die($mysqli->error);
             <?php } ?>
         </div>
         <?php echo "<a class = \"btn btn-success\" onclick=\"myFunction2('".$row['setID']."')\">Edit</a>"; ?>
-        <?php echo "<a class = \"btn btn-delete\" onclick=\"myFunction('".$row['setID']."')\">Delete</a>"; ?>
+        <?php echo "<a class = \"btn btn-danger\" onclick=\"myFunction('".$row['setID']."')\">Delete</a>"; ?>
         <?php $order += 1?>
     </div>
     <?php } ?>
