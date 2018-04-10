@@ -20,9 +20,9 @@ if($_SESSION['username']){ //checks if user is logged in
 }
 else{
     //Add pop-ups for users who did not login, redirect to the login.php
-    echo "<script>alert('Please first log in, then see the detail of this component!');</script>";
-    Print '<script>window.location.assign("login.php");</script>';
-    //header("location:login.php"); // redirects if user is not logged in
+	echo "<script>alert('Please first log in, then see the detail of this component!');</script>";
+	Print '<script>window.location.assign("login.php");</script>';
+	//header("location:login.php"); // redirects if user is not logged in
 }
 // $username = $_SESSION['username']; //assigns user value
 ?>
@@ -88,10 +88,10 @@ $similar_result = mysqli_query($mysqli, $similar_query) or die($mysqli->error);
 
 
 <div class = "container bg-info well well-lg">
-    <!--<h2>Information</h2>-->
-    <!--<p>Detailed information about this component.</p>-->
+	<!--<h2>Information</h2>-->
+	<!--<p>Detailed information about this component.</p>-->
     <div class="container" style="display: flex; flex-wrap: wrap;">
-        <?php while($row = mysqli_fetch_array($result)) { ?>
+    	<?php while($row = mysqli_fetch_array($result)) { ?>
         
         <div class = "img-rounded" >
             <?php echo '<img src='.$row['image_url'].'>'; ?>
@@ -133,9 +133,12 @@ $similar_result = mysqli_query($mysqli, $similar_query) or die($mysqli->error);
                     <?php echo "<a href= ".$row['amazon_url']." class = \"btn btn-success\">More information on Amazon !</a>"; ?>
                 </div>
         <?php } ?>
-            </td>
             
-        </tr>
+            <div class="fb-share-button" data-href="http://rigassembly.web.engr.illinois.edu/info.php" data-layout="button_count" data-size="small" data-mobile-iframe="true"><a target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Frigassembly.web.engr.illinois.edu%2Finfo.php&amp;src=sdkpreparse" class="fb-xfbml-parse-ignore">Share</a></div>
+            
+            </td>
+        	
+	    </tr>
     </table>
     
 
@@ -147,8 +150,8 @@ mysqli_data_seek($advanced_result, 0);
 ?>
 
 <div class = "container bg-info well well-lg">
-    <p><strong><font size="4" face="verdana" color=FF5733> Customers who bought this item also bought </font></strong></p>
-    
+	<p><strong><font size="4" face="verdana" color=FF5733> Customers who bought this item also bought </font></strong></p>
+	
 
 
 </div>
@@ -157,8 +160,8 @@ mysqli_data_seek($advanced_result, 0);
 <!--Compare with similar items-->
 
 <div class = "container bg-info well well-lg">
-    <p><strong><font size="4" face="verdana" color=FF5733> Compare with similar items </font></strong></p>
-    
+	<p><strong><font size="4" face="verdana" color=FF5733> Compare with similar items </font></strong></p>
+	
     <table class="similar">
         <!--First column: Component image and name-->
         <tr>
