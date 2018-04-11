@@ -38,9 +38,6 @@ $email = $_SESSION['username']
 
   <body>
       <?php
-
-      // Form the SQL query that returns the top 10 most populous countries
-      /* $strQuery = "SELECT Name, Population FROM Country ORDER BY Population DESC LIMIT 10"; */
       
       // $strQuery = "SELECT cpu_name, gpu_name, mb_name, psu_name, ram_name, subscript
       //              FROM includes
@@ -48,9 +45,8 @@ $email = $_SESSION['username']
       //                             FROM creates
       //                             WHERE email = '$email')";
 
-
       // cpu query -> cpu_name, speed, price
-      $cpuQuery = "SELECT cpu.name as name, cpu.speed as speed, components.price as price
+      $cpuQuery = "SELECT ALL cpu.name as name, cpu.speed as speed, components.price as price
                    FROM creates
                    INNER JOIN includes ON creates.setID = includes.setID
                    INNER JOIN cpu ON includes.cpu_name = cpu.name
@@ -58,22 +54,13 @@ $email = $_SESSION['username']
                    WHERE creates.email = '$email'";
       
       
-      // gpu query -> gpu_name, price, lock
-      $gpuQuery = "SELECT name, lock
-                   FROM gpu
-                   WHERE name IN (SELECT gpu_name
-                                 FROM includes
-                                 WHERE setID IN (SELECT setID
-                                                FROM creates
-                                                WHERE email = '$email'))
-                   UNION
-                   SELECT price
-                   FROM components
-                   WHERE name IN (SELECT gpu_name
-                                 FROM includes
-                                 WHERE setID IN (SELECT setID
-                                                FROM creates
-                                                WHERE email = '$email'))";
+      // gpu query -> gpu_name, clock, price
+      $gpuQuery = "SELECT ALL gpu.name as name, gpu.clock as clock, components.price as price
+                   FROM creates
+                   INNER JOIN includes ON creates.setID = includes.setID
+                   INNER JOIN gpu ON includes.gpu_name = gpu.name
+                   INNER JOIN components ON components.name = gpu.name
+                   WHERE creates.email = '$email'";
 
       // mb query -> mb_name, price
       $mbQuery = "SELECT name, price
@@ -85,7 +72,7 @@ $email = $_SESSION['username']
                                                 WHERE email = '$email'))";
 
 
-      // psu query -> name, power, price
+      // psu query -> name, price, power
       $psuQuery = "SELECT name, power
                    FROM psu
                    WHERE name IN (SELECT psu_name
@@ -123,11 +110,15 @@ $email = $_SESSION['username']
       // Execute the query, or else return the error message.
 
       $resultcpu = mysqli_query($mysqli, $cpuQuery) or exit("Error code ({$mysqli->errno}): {$mysqli->error}");
+      $resultgpu = mysqli_query($mysqli, $gpuQuery) or exit("Error code ({$mysqli->errno}): {$mysqli->error}");
 
       // If the query returns a valid response, prepare the JSON string
+      
+      // cpu
+      
       if ($resultcpu) {
         // The `$arrData` array holds the chart attributes and data
-        $arrData = array(
+        $arrData1 = array(
             "chart" => array(
               "caption" => "Comparison between your selected CPUs",
               "showValues" => "1",
@@ -143,10 +134,10 @@ $email = $_SESSION['username']
 
         // creating array for categories object
         
-        $arrData["data"] = array();
-        $categoryArray=array();
-        $dataseries1=array();
-        $dataseries2=array();
+        $arrData1["data"] = array();
+        $categoryArray1=array();
+        $dataseries11=array();
+        $dataseries21=array();
         // $dataseries3=array();
 
         // Push the data into the array
@@ -155,17 +146,17 @@ $email = $_SESSION['username']
         while($row = mysqli_fetch_array($resultcpu)) {
             //  echo $row["name"], $row["speed"], $row["price"], '\n';
 
-            array_push($categoryArray, array(
+            array_push($categoryArray1, array(
                 "label" => $row["name"]
                 )
             );
             
-             array_push($dataseries1, array(
+             array_push($dataseries11, array(
                 "value" => $row["speed"]
                 )
             );
             
-            array_push($dataseries2, array(
+            array_push($dataseries21, array(
                 "value" => $row["price"]
                 )
             );
@@ -173,38 +164,113 @@ $email = $_SESSION['username']
             }
 
 
-      $arrData["categories"]=array(array("category"=>$categoryArray));
+      $arrData1["categories"]=array(array("category"=>$categoryArray1));
       // creating dataset object
-      $arrData["dataset"] = array(
-        array("seriesName"=> "Speed", "parentYAxis" => "S", "showValues"=> "0", "data"=>$dataseries1), 
-        array("seriesName"=> "Price", "data"=>$dataseries2));
+      $arrData1["dataset"] = array(
+        array("seriesName"=> "Speed", "parentYAxis" => "S", "showValues"=> "0", "data"=>$dataseries11), 
+        array("seriesName"=> "Price", "data"=>$dataseries21));
 
 
      /*JSON Encode the data to retrieve the string containing the JSON representation of the data in the array. */
 
-     $jsonEncodedData = json_encode($arrData);
+     $jsonEncodedData1 = json_encode($arrData1);
 
      /*Create an object for the column chart using the FusionCharts PHP class constructor. Syntax for the constructor is ` FusionCharts("type of chart", "unique chart id", width of the chart, height of the chart, "div id to render the chart", "data format", "data source")`. Because we are using JSON data to render the chart, the data format will be `json`. The variable `$jsonEncodeData` holds all the JSON data for the chart, and will be passed as the value for the data source parameter of the constructor.*/
 
-     $columnChart = new FusionCharts("mscombidy2d",
-                                     "chartId",
-                                     700,
-                                     400,
-                                     "chart-1",
-                                     "json",
-                                     $jsonEncodedData);
+     $columnChartcpu = new FusionCharts("mscombidy2d",
+                                        "chartId1",
+                                        700,
+                                        400,
+                                        "chart-cpu",
+                                        "json",
+                                        $jsonEncodedData1);
 
      // Render the chart
-     $columnChart->render();
+     $columnChartcpu->render();
+}
+
+    // gpu
+
+     if ($resultgpu) {
+
+        $arrData2 = array(
+            "chart" => array(
+              "caption" => "Comparison between your selected GPUs",
+              "showValues" => "1",
+              "theme" => "fint",
+              "pyaxisname"=> "Price",
+              "syaxisname"=> "Clock",
+              "xaxisname"=>"GPU",
+              "numberPrefix"=> "$",
+
+          )
+        );
+
+        // creating array for categories object
+        
+        $arrData2["data"] = array();
+        $categoryArray2=array();
+        $dataseries12=array();
+        $dataseries22=array();
+        // $dataseries3=array();
+
+        // Push the data into the array
+
+        // pushing category array values
+        while($row = mysqli_fetch_array($resultgpu)) {
+            //  echo $row["name"], $row["speed"], $row["price"], '\n';
+
+            array_push($categoryArray2, array(
+                "label" => $row["name"]
+                )
+            );
+            
+             array_push($dataseries12, array(
+                "value" => $row["clock"]
+                )
+            );
+            
+            array_push($dataseries22, array(
+                "value" => $row["price"]
+                )
+            );
+            
+            }
+
+
+      $arrData2["categories"]=array(array("category"=>$categoryArray2));
+      // creating dataset object
+      $arrData2["dataset"] = array(
+        array("seriesName"=> "Clock", "parentYAxis" => "S", "showValues"=> "0", "data"=>$dataseries12), 
+        array("seriesName"=> "Price", "data"=>$dataseries22));
+
+
+     $jsonEncodedData2 = json_encode($arrData2);
+
+     $columnChartgpu = new FusionCharts("mscombidy2d",
+                                        "chartId2",
+                                        700,
+                                        400,
+                                        "chart-gpu",
+                                        "json",
+                                        $jsonEncodedData2);
+
+     // Render the chart
+     $columnChartgpu->render();
+}
+
+
+
+
 
      // Close the database connection
      $mysqli->close();
- }
-
 
  ?>
 
- <div id="chart-1"><!-- Fusion Charts will render here--></div>
+ <div id="chart-cpu" align="center"> </div>
+ <br><br>
+ <div id="chart-gpu" align="center"> </div>
 
 </body>
 
