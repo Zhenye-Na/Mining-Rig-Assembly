@@ -25,7 +25,7 @@ $email = $_SESSION['username']
 
 <html>
 <head>
-  <title>Charts XT - Data from a database</title>
+
   <!-- <link  rel="stylesheet" type="text/css" href="css/style.css" /> -->
 
       <!-- You need to include the following JS file to render the chart.
@@ -33,6 +33,7 @@ $email = $_SESSION['username']
       Else, you will get JavaScript errors. -->
 
       <script src="includes/fusioncharts.js"></script>
+      <script src="includes/fusioncharts.theme.fint.js"></script>
   </head>
 
   <body>
@@ -48,45 +49,45 @@ $email = $_SESSION['username']
       //                             WHERE email = '$email')";
 
       // cpu query -> cpu_name, speed, price
-      $cpuQuery = "SELECT name, speed
+      $cpusQuery = "SELECT *
                    FROM cpu
-                   WHERE name = (SELECT cpu_name
+                   WHERE name IN (SELECT cpu_name
                                  FROM includes
-                                 WHERE setID = (SELECT setID
-                                                FROM creates
-                                                WHERE email = '$email'))
-                   UNION
-                   SELECT price
-                   FROM components
-                   WHERE name = (SELECT cpu_name
-                                 FROM includes
-                                 WHERE setID = (SELECT setID
+                                 WHERE setID IN (SELECT setID
                                                 FROM creates
                                                 WHERE email = '$email'))";
+                  
+      $cpupQuery = "SELECT price
+                    FROM components
+                    WHERE name IN (SELECT cpu_name
+                                  FROM includes
+                                  WHERE setID IN (SELECT setID
+                                                 FROM creates
+                                                 WHERE email = '$email'))";
 
       // gpu query -> gpu_name, price, lock
       $gpuQuery = "SELECT name, lock
                    FROM gpu
-                   WHERE name = (SELECT gpu_name
+                   WHERE name IN (SELECT gpu_name
                                  FROM includes
-                                 WHERE setID = (SELECT setID
+                                 WHERE setID IN (SELECT setID
                                                 FROM creates
                                                 WHERE email = '$email'))
                    UNION
                    SELECT price
                    FROM components
-                   WHERE name = (SELECT gpu_name
+                   WHERE name IN (SELECT gpu_name
                                  FROM includes
-                                 WHERE setID = (SELECT setID
+                                 WHERE setID IN (SELECT setID
                                                 FROM creates
                                                 WHERE email = '$email'))";
 
       // mb query -> mb_name, price
       $mbQuery = "SELECT name, price
                    FROM components
-                   WHERE name = (SELECT mb_name
+                   WHERE name IN (SELECT mb_name
                                  FROM includes
-                                 WHERE setID = (SELECT setID
+                                 WHERE setID IN (SELECT setID
                                                 FROM creates
                                                 WHERE email = '$email'))";
 
@@ -94,7 +95,7 @@ $email = $_SESSION['username']
       // psu query -> name, power, price
       $psuQuery = "SELECT name, power
                    FROM psu
-                   WHERE name = (SELECT psu_name
+                   WHERE name IN (SELECT psu_name
                                  FROM includes
                                  WHERE setID = (SELECT setID
                                                 FROM creates
@@ -102,9 +103,9 @@ $email = $_SESSION['username']
                    UNION
                    SELECT price
                    FROM components
-                   WHERE name = (SELECT psu_name
+                   WHERE name IN (SELECT psu_name
                                  FROM includes
-                                 WHERE setID = (SELECT setID
+                                 WHERE setID IN (SELECT setID
                                                 FROM creates
                                                 WHERE email = '$email'))";
 
@@ -112,17 +113,17 @@ $email = $_SESSION['username']
       // ram query -> name, price, size
       $ramQuery = "SELECT name, size
                    FROM ram
-                   WHERE name = (SELECT ram_name
+                   WHERE name IN (SELECT ram_name
                                  FROM includes
-                                 WHERE setID = (SELECT setID
+                                 WHERE setID IN (SELECT setID
                                                 FROM creates
                                                 WHERE email = '$email'))
                    UNION
                    SELECT price
                    FROM components
-                   WHERE name = (SELECT ram_name
+                   WHERE name IN (SELECT ram_name
                                  FROM includes
-                                 WHERE setID = (SELECT setID
+                                 WHERE setID IN (SELECT setID
                                                 FROM creates
                                                 WHERE email = '$email'))";
 
@@ -132,16 +133,17 @@ $email = $_SESSION['username']
 
       // $result = mysqli_query($mysqli, $strQuery) or exit("Error code ({$mysqli->errno}): {$mysqli->error}");
 
-      $result = mysqli_query($mysqli, $cpuQuery) or exit("Error code ({$mysqli->errno}): {$mysqli->error}");
+      $resultcpus = mysqli_query($mysqli, $cpusQuery) or exit("Error code ({$mysqli->errno}): {$mysqli->error}");
+    //   $resultcpup = mysqli_query($mysqli, $cpupQuery) or exit("Error code ({$mysqli->errno}): {$mysqli->error}");
 
       // If the query returns a valid response, prepare the JSON string
-      if ($result) {
+      if ($resultcpus) {
         // The `$arrData` array holds the chart attributes and data
         $arrData = array(
             "chart" => array(
-              "caption" => "Comparation between your Setups | Parts",
-              "showValues" => "0",
-              "theme" => "zune"
+              "caption" => "Comparison of Speed between your selected CPUs",
+              "showValues" => "1",
+              "theme" => "fint"
 
               // "paletteColors" => "#0075c2",
               // "bgColor" => "#ffffff",
@@ -158,29 +160,60 @@ $email = $_SESSION['username']
           )
         );
 
+        // creating array for categories object
         $arrData["data"] = array();
+        // $categoryArray=array();
+        // $dataseries1=array();
+        // $dataseries2=array();
+        // $dataseries3=array();
 
         // Push the data into the array
 
-        // while($row = mysqli_fetch_array($result)) {
-        //  array_push($arrData["data"], array(
-        //   "label" => $row["cpu_name"],
-        //   "value" => $row["gpu_name"]
-        // )
+       //  while($row = mysqli_fetch_array($result)) {
+       //   array_push($arrData["data"], array(
+       //    "label" => $row["cpu_name"],
+       //    "value" => $row["gpu_name"]
+       //  )
+       // );
+       // }
 
-         while($row = mysqli_fetch_array($result)) {
-           array_push($arrData["data"], array(
-            "label" => $row["name"],
-            "value" => $row["speed"]
-            "value" => $row["price"]
+       //  while($row = mysqli_fetch_array($result)) {
+       //   array_push($arrData["data"], array(
+       //    "label" => $row["name"],
+       //    "value" => $row["speed"]
+       //    "value" => $row["price"]
 
-          )
-     );
-     }
+       //  )
+       // );
+       // }
 
-      $arrData["categories"]=array(array("category"=>$categoryArray));
-      // creating dataset object
-      $arrData["dataset"] = array(array("seriesName"=> "Actual Revenue", "data"=>$dataseries1), array("seriesName"=> "Projected Revenue",  "renderAs"=>"line", "data"=>$dataseries2),array("seriesName"=> "Profit",  "renderAs"=>"area", "data"=>$dataseries3));
+
+        // pushing category array values
+        while($row = mysqli_fetch_array($resultcpus)) {
+            //   echo $row["name"], $row["speed"];
+               array_push($arrData["data"], array(
+                  "label" => $row["name"],
+                  "value" => $row["speed"]
+                  )
+               );
+            }
+
+        //   array_push($dataseries2, array(
+        //     "value" => $row["price"]
+        //   )
+        // );
+        //   array_push($dataseries3, array(
+        //     "value" => $row["value3"]
+        //   )
+        // );
+
+        // }
+
+    //   $arrData["categories"]=array(array("category"=>$categoryArray));
+    //   // creating dataset object
+    //   $arrData["dataset"] = array(array("seriesName"=> "CPU", "data"=>$dataseries1), 
+    //                               array("seriesName"=> "Speed",  "renderAs"=>"point", "data"=>$dataseries2));
+    //                             //   array("seriesName"=> "Price",  "renderAs"=>"area", "data"=>$dataseries3));
 
 
      /*JSON Encode the data to retrieve the string containing the JSON representation of the data in the array. */
@@ -189,7 +222,13 @@ $email = $_SESSION['username']
 
      /*Create an object for the column chart using the FusionCharts PHP class constructor. Syntax for the constructor is ` FusionCharts("type of chart", "unique chart id", width of the chart, height of the chart, "div id to render the chart", "data format", "data source")`. Because we are using JSON data to render the chart, the data format will be `json`. The variable `$jsonEncodeData` holds all the JSON data for the chart, and will be passed as the value for the data source parameter of the constructor.*/
 
-     $columnChart = new FusionCharts("column2D", "myFirstChart" , 600, 300, "chart-1", "json", $jsonEncodedData);
+     $columnChart = new FusionCharts("column2D",
+                                     "chartId",
+                                     600,
+                                     300,
+                                     "chart-1",
+                                     "json",
+                                     $jsonEncodedData);
 
      // Render the chart
      $columnChart->render();
@@ -197,6 +236,7 @@ $email = $_SESSION['username']
      // Close the database connection
      $mysqli->close();
  }
+
 
  ?>
 
@@ -208,5 +248,38 @@ $email = $_SESSION['username']
 
 
 
-
+<style>
+ body {
+     color: #666666;
+     font-family:"Arial", "Helvetica";
+     font-size: 12px;
+ }
+ .grayBorder {
+     border: 1px solid #CCCCCC;
+     margin: 3px;
+     float: left;
+ }
+ .fontBold {
+     font-weight: bold;
+     font-size: 14px;
+     vertical-align: top;
+     text-align:right;
+ }
+ .fontBoldSmall {
+     font-weight: bold;
+     font-size: 12px;
+     background-color: #EEEEEE;
+     text-align:center;
+ }
+ .valueFont {
+     padding: 3px;
+ }
+ #tableView {
+     width:500px;
+     display:none;
+     margin-left:0px;
+     max-height: 250px;
+     overflow:scroll;
+ }
+</style>
 
