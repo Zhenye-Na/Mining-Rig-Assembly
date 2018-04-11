@@ -48,43 +48,8 @@ $email = $_SESSION['username']
       //                             FROM creates
       //                             WHERE email = '$email')";
 
+
       // cpu query -> cpu_name, speed, price
-    //   $cpuQuery = "SELECT cpu.name, cpu.speed
-    //               FROM cpu
-    //               WHERE name IN (SELECT cpu_name
-    //                              FROM includes
-    //                              WHERE setID IN (SELECT setID
-    //                                             FROM creates
-    //                                             WHERE email = '$email'))
-    //                 LEFT JOIN
-    //                 SELECT components.name, price
-    //                 FROM components
-    //                 WHERE name IN (SELECT cpu_name
-    //                               FROM includes
-    //                               WHERE setID IN (SELECT setID
-    //                                              FROM creates
-    //                                              WHERE email = '$email'))
-    //                 ON
-    //                     cpu.name = components.name";
-    
-    
-    
-    //   $cpuQuery = "SELECT cpu.name, cpu.speed
-    //               FROM cpu INNER JOIN (SELECT components.name, price
-    //                                     FROM components
-    //                                     WHERE components.name IN (SELECT includes.cpu_name
-    //                                                   FROM includes
-    //                                                   WHERE includes.setID IN (SELECT creates.setID
-    //                                      FROM creates
-    //                                      WHERE creates.email = '$email'))) ON cpu.name = components.name
-    //                 WHERE cpu.name IN (SELECT includes.cpu_name
-    //                                   FROM includes
-    //                                   WHERE includes.setID IN (SELECT creates.setID
-    //                                                   FROM creates
-    //                                                   WHERE creates.email = '$email'))
-    //   ";
-
-
       $cpuQuery = "SELECT cpu.name as name, cpu.speed as speed, components.price as price
                    FROM creates
                    INNER JOIN includes ON creates.setID = includes.setID
@@ -157,12 +122,7 @@ $email = $_SESSION['username']
 
       // Execute the query, or else return the error message.
 
-      // $result = $mysqli->query($strQuery) or exit("Error code ({$mysqli->errno}): {$mysqli->error}");
-
-      // $result = mysqli_query($mysqli, $strQuery) or exit("Error code ({$mysqli->errno}): {$mysqli->error}");
-
       $resultcpu = mysqli_query($mysqli, $cpuQuery) or exit("Error code ({$mysqli->errno}): {$mysqli->error}");
-    //   $resultcpup = mysqli_query($mysqli, $cpupQuery) or exit("Error code ({$mysqli->errno}): {$mysqli->error}");
 
       // If the query returns a valid response, prepare the JSON string
       if ($resultcpu) {
@@ -172,28 +132,17 @@ $email = $_SESSION['username']
               "caption" => "Comparison between your selected CPUs",
               "showValues" => "1",
               "theme" => "fint",
-              "PYAxisName"=> "Speed",
-              "SYAxisName"=> "Price",
-              "xAxisname" => "CPU",
-              "adjustDiv" => "0",
-              "syncAxisLimits" => "1"
-            //   "yAxisName" => "Speed",
-            //   "paletteColors" => "#0075c2",
-            //   "bgColor" => "#ffffff",
-            //   "borderAlpha"=> "20",
-            //   "canvasBorderAlpha"=> "0",
-            //   "usePlotGradientColor"=> "0",
-            //   "plotBorderAlpha"=> "10",
-            //   "showXAxisLine"=> "1",
-            //   "xAxisLineColor" => "#999999",
-            //   "showValues" => "0",
-            //   "divlineColor" => "#999999",
-            //   "divLineIsDashed" => "1",
-            //   "showAlternateHGridColor" => "0"
+              "pyaxisname"=> "Price",
+              "syaxisname"=> "Speed",
+              "xaxisname"=>"CPU",
+              "pYAxisMaxValue"=> "5",
+              "numberPrefix"=> "$",
+
           )
         );
 
         // creating array for categories object
+        
         $arrData["data"] = array();
         $categoryArray=array();
         $dataseries1=array();
@@ -202,35 +151,10 @@ $email = $_SESSION['username']
 
         // Push the data into the array
 
-       //  while($row = mysqli_fetch_array($result)) {
-       //   array_push($arrData["data"], array(
-       //    "label" => $row["cpu_name"],
-       //    "value" => $row["gpu_name"]
-       //  )
-       // );
-       // }
-
-       //  while($row = mysqli_fetch_array($result)) {
-       //   array_push($arrData["data"], array(
-       //    "label" => $row["name"],
-       //    "value" => $row["speed"]
-       //    "value" => $row["price"]
-
-       //  )
-       // );
-       // }
-
-
         // pushing category array values
         while($row = mysqli_fetch_array($resultcpu)) {
             //  echo $row["name"], $row["speed"], $row["price"], '\n';
-            //   array_push($arrData["data"], array(
-            //       "label" => $row["name"],
-            //       "value" => $row["speed"],
-            //       "value" => $row["price"]
-            //       )
-            //   );
-            
+
             array_push($categoryArray, array(
                 "label" => $row["name"]
                 )
@@ -248,21 +172,11 @@ $email = $_SESSION['username']
             
             }
 
-        //   array_push($dataseries2, array(
-        //     "value" => $row["price"]
-        //   )
-        // );
-        //   array_push($dataseries3, array(
-        //     "value" => $row["value3"]
-        //   )
-        // );
-
-        // }
 
       $arrData["categories"]=array(array("category"=>$categoryArray));
       // creating dataset object
       $arrData["dataset"] = array(
-        array("seriesName"=> "Speed", "data"=>$dataseries1), 
+        array("seriesName"=> "Speed", "parentYAxis" => "S", "showValues"=> "0", "data"=>$dataseries1), 
         array("seriesName"=> "Price", "data"=>$dataseries2));
 
 
@@ -272,10 +186,10 @@ $email = $_SESSION['username']
 
      /*Create an object for the column chart using the FusionCharts PHP class constructor. Syntax for the constructor is ` FusionCharts("type of chart", "unique chart id", width of the chart, height of the chart, "div id to render the chart", "data format", "data source")`. Because we are using JSON data to render the chart, the data format will be `json`. The variable `$jsonEncodeData` holds all the JSON data for the chart, and will be passed as the value for the data source parameter of the constructor.*/
 
-     $columnChart = new FusionCharts("msbar2d",
+     $columnChart = new FusionCharts("mscombidy2d",
                                      "chartId",
-                                     800,
-                                     350,
+                                     700,
+                                     400,
                                      "chart-1",
                                      "json",
                                      $jsonEncodedData);
