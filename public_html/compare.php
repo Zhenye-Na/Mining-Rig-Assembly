@@ -49,22 +49,50 @@ $email = $_SESSION['username']
       //                             WHERE email = '$email')";
 
       // cpu query -> cpu_name, speed, price
-      $cpusQuery = "SELECT *
-                   FROM cpu
-                   WHERE name IN (SELECT cpu_name
-                                 FROM includes
-                                 WHERE setID IN (SELECT setID
-                                                FROM creates
-                                                WHERE email = '$email'))";
-                  
-      $cpupQuery = "SELECT price
-                    FROM components
-                    WHERE name IN (SELECT cpu_name
-                                  FROM includes
-                                  WHERE setID IN (SELECT setID
-                                                 FROM creates
-                                                 WHERE email = '$email'))";
+    //   $cpuQuery = "SELECT cpu.name, cpu.speed
+    //               FROM cpu
+    //               WHERE name IN (SELECT cpu_name
+    //                              FROM includes
+    //                              WHERE setID IN (SELECT setID
+    //                                             FROM creates
+    //                                             WHERE email = '$email'))
+    //                 LEFT JOIN
+    //                 SELECT components.name, price
+    //                 FROM components
+    //                 WHERE name IN (SELECT cpu_name
+    //                               FROM includes
+    //                               WHERE setID IN (SELECT setID
+    //                                              FROM creates
+    //                                              WHERE email = '$email'))
+    //                 ON
+    //                     cpu.name = components.name";
+    
+    
+    
+    //   $cpuQuery = "SELECT cpu.name, cpu.speed
+    //               FROM cpu INNER JOIN (SELECT components.name, price
+    //                                     FROM components
+    //                                     WHERE components.name IN (SELECT includes.cpu_name
+    //                                                   FROM includes
+    //                                                   WHERE includes.setID IN (SELECT creates.setID
+    //                                      FROM creates
+    //                                      WHERE creates.email = '$email'))) ON cpu.name = components.name
+    //                 WHERE cpu.name IN (SELECT includes.cpu_name
+    //                                   FROM includes
+    //                                   WHERE includes.setID IN (SELECT creates.setID
+    //                                                   FROM creates
+    //                                                   WHERE creates.email = '$email'))
+    //   ";
 
+
+      $cpuQuery = "SELECT cpu.name as name, cpu.speed as speed, components.price as price
+                   FROM creates
+                   INNER JOIN includes ON creates.setID = includes.setID
+                   INNER JOIN cpu ON includes.cpu_name = cpu.name
+                   INNER JOIN components ON components.name = cpu.name
+                   WHERE creates.email = '$email'";
+      
+      
       // gpu query -> gpu_name, price, lock
       $gpuQuery = "SELECT name, lock
                    FROM gpu
@@ -133,38 +161,43 @@ $email = $_SESSION['username']
 
       // $result = mysqli_query($mysqli, $strQuery) or exit("Error code ({$mysqli->errno}): {$mysqli->error}");
 
-      $resultcpus = mysqli_query($mysqli, $cpusQuery) or exit("Error code ({$mysqli->errno}): {$mysqli->error}");
+      $resultcpu = mysqli_query($mysqli, $cpuQuery) or exit("Error code ({$mysqli->errno}): {$mysqli->error}");
     //   $resultcpup = mysqli_query($mysqli, $cpupQuery) or exit("Error code ({$mysqli->errno}): {$mysqli->error}");
 
       // If the query returns a valid response, prepare the JSON string
-      if ($resultcpus) {
+      if ($resultcpu) {
         // The `$arrData` array holds the chart attributes and data
         $arrData = array(
             "chart" => array(
-              "caption" => "Comparison of Speed between your selected CPUs",
+              "caption" => "Comparison between your selected CPUs",
               "showValues" => "1",
-              "theme" => "fint"
-
-              // "paletteColors" => "#0075c2",
-              // "bgColor" => "#ffffff",
-              // "borderAlpha"=> "20",
-              // "canvasBorderAlpha"=> "0",
-              // "usePlotGradientColor"=> "0",
-              // "plotBorderAlpha"=> "10",
-              // "showXAxisLine"=> "1",
-              // "xAxisLineColor" => "#999999",
-              // "showValues" => "0",
-              // "divlineColor" => "#999999",
-              // "divLineIsDashed" => "1",
-              // "showAlternateHGridColor" => "0"
+              "theme" => "fint",
+              "PYAxisName"=> "Speed",
+              "SYAxisName"=> "Price",
+              "xAxisname" => "CPU",
+              "adjustDiv" => "0",
+              "syncAxisLimits" => "1"
+            //   "yAxisName" => "Speed",
+            //   "paletteColors" => "#0075c2",
+            //   "bgColor" => "#ffffff",
+            //   "borderAlpha"=> "20",
+            //   "canvasBorderAlpha"=> "0",
+            //   "usePlotGradientColor"=> "0",
+            //   "plotBorderAlpha"=> "10",
+            //   "showXAxisLine"=> "1",
+            //   "xAxisLineColor" => "#999999",
+            //   "showValues" => "0",
+            //   "divlineColor" => "#999999",
+            //   "divLineIsDashed" => "1",
+            //   "showAlternateHGridColor" => "0"
           )
         );
 
         // creating array for categories object
         $arrData["data"] = array();
-        // $categoryArray=array();
-        // $dataseries1=array();
-        // $dataseries2=array();
+        $categoryArray=array();
+        $dataseries1=array();
+        $dataseries2=array();
         // $dataseries3=array();
 
         // Push the data into the array
@@ -189,13 +222,30 @@ $email = $_SESSION['username']
 
 
         // pushing category array values
-        while($row = mysqli_fetch_array($resultcpus)) {
-            //   echo $row["name"], $row["speed"];
-               array_push($arrData["data"], array(
-                  "label" => $row["name"],
-                  "value" => $row["speed"]
-                  )
-               );
+        while($row = mysqli_fetch_array($resultcpu)) {
+            //  echo $row["name"], $row["speed"], $row["price"], '\n';
+            //   array_push($arrData["data"], array(
+            //       "label" => $row["name"],
+            //       "value" => $row["speed"],
+            //       "value" => $row["price"]
+            //       )
+            //   );
+            
+            array_push($categoryArray, array(
+                "label" => $row["name"]
+                )
+            );
+            
+             array_push($dataseries1, array(
+                "value" => $row["speed"]
+                )
+            );
+            
+            array_push($dataseries2, array(
+                "value" => $row["price"]
+                )
+            );
+            
             }
 
         //   array_push($dataseries2, array(
@@ -209,11 +259,11 @@ $email = $_SESSION['username']
 
         // }
 
-    //   $arrData["categories"]=array(array("category"=>$categoryArray));
-    //   // creating dataset object
-    //   $arrData["dataset"] = array(array("seriesName"=> "CPU", "data"=>$dataseries1), 
-    //                               array("seriesName"=> "Speed",  "renderAs"=>"point", "data"=>$dataseries2));
-    //                             //   array("seriesName"=> "Price",  "renderAs"=>"area", "data"=>$dataseries3));
+      $arrData["categories"]=array(array("category"=>$categoryArray));
+      // creating dataset object
+      $arrData["dataset"] = array(
+        array("seriesName"=> "Speed", "data"=>$dataseries1), 
+        array("seriesName"=> "Price", "data"=>$dataseries2));
 
 
      /*JSON Encode the data to retrieve the string containing the JSON representation of the data in the array. */
@@ -222,10 +272,10 @@ $email = $_SESSION['username']
 
      /*Create an object for the column chart using the FusionCharts PHP class constructor. Syntax for the constructor is ` FusionCharts("type of chart", "unique chart id", width of the chart, height of the chart, "div id to render the chart", "data format", "data source")`. Because we are using JSON data to render the chart, the data format will be `json`. The variable `$jsonEncodeData` holds all the JSON data for the chart, and will be passed as the value for the data source parameter of the constructor.*/
 
-     $columnChart = new FusionCharts("column2D",
+     $columnChart = new FusionCharts("msbar2d",
                                      "chartId",
-                                     600,
-                                     300,
+                                     800,
+                                     350,
                                      "chart-1",
                                      "json",
                                      $jsonEncodedData);
