@@ -54,7 +54,23 @@ $email = $_SESSION['username']
                    WHERE creates.email = '$email'";
       
       
-      // gpu query -> gpu_name, clock, price
+      // gpu query -> gpu_name, lock, price
+    //   $gpuQuery = "SELECT name, lock
+    //               FROM gpu
+    //               WHERE name IN (SELECT gpu_name
+    //                              FROM includes
+    //                              WHERE setID IN (SELECT setID
+    //                                             FROM creates
+    //                                             WHERE email = '$email'))
+    //               UNION
+    //               SELECT price
+    //               FROM components
+    //               WHERE name IN (SELECT gpu_name
+    //                              FROM includes
+    //                              WHERE setID IN (SELECT setID
+    //                                             FROM creates
+    //                                             WHERE email = '$email'))";
+
       $gpuQuery = "SELECT ALL gpu.name as name, gpu.clock as clock, components.price as price
                    FROM creates
                    INNER JOIN includes ON creates.setID = includes.setID
@@ -63,13 +79,20 @@ $email = $_SESSION['username']
                    WHERE creates.email = '$email'";
 
       // mb query -> mb_name, price
-      $mbQuery = "SELECT name, price
-                   FROM components
-                   WHERE name IN (SELECT mb_name
-                                 FROM includes
-                                 WHERE setID IN (SELECT setID
-                                                FROM creates
-                                                WHERE email = '$email'))";
+    //   $mbQuery = "SELECT name, price
+    //               FROM components
+    //               WHERE components.name IN (SELECT includes.mb_name
+    //                              FROM includes
+    //                              WHERE includes.setID IN (SELECT setID
+    //                                             FROM creates
+    //                                             WHERE email = '$email'))";
+    
+      $mbQuery = "SELECT ALL mb.name as name, components.price as price
+                  FROM creates
+                  INNER JOIN includes ON creates.setID = includes.setID
+                  INNER JOIN mb ON includes.mb_name = mb.name
+                  INNER JOIN components ON components.name = mb.name
+                  WHERE creates.email = '$email'"; 
 
 
       // psu query -> name, price, power
@@ -111,6 +134,7 @@ $email = $_SESSION['username']
 
       $resultcpu = mysqli_query($mysqli, $cpuQuery) or exit("Error code ({$mysqli->errno}): {$mysqli->error}");
       $resultgpu = mysqli_query($mysqli, $gpuQuery) or exit("Error code ({$mysqli->errno}): {$mysqli->error}");
+      $resultmb = mysqli_query($mysqli, $mbQuery) or exit("Error code ({$mysqli->errno}): {$mysqli->error}");
 
       // If the query returns a valid response, prepare the JSON string
       
@@ -261,6 +285,75 @@ $email = $_SESSION['username']
 
 
 
+     // mb
+
+     if ($resultmb) {
+
+        $arrData3 = array(
+            "chart" => array(
+              "caption" => "Comparison between your selected MothBoards",
+              "showValues" => "1",
+              "theme" => "fint",
+              "pyaxisname"=> "Price",
+              "xaxisname"=>"MothBoards",
+              "numberPrefix"=> "$",
+
+          )
+        );
+
+        // creating array for categories object
+        
+        $arrData3["data"] = array();
+        $categoryArray3=array();
+        // $dataseries13=array();
+        $dataseries23=array();
+        // $dataseries3=array();
+
+        // Push the data into the array
+
+        // pushing category array values
+        while($row = mysqli_fetch_array($resultmb)) {
+            //  echo $row["name"], $row["speed"], $row["price"], '\n';
+
+            array_push($categoryArray3, array(
+                "label" => $row["name"]
+                )
+            );
+            
+            //  array_push($dataseries13, array(
+            //     "value" => $row["clock"]
+            //     )
+            // );
+            
+            array_push($dataseries23, array(
+                "value" => $row["price"]
+                )
+            );
+            
+            }
+
+
+      $arrData3["categories"]=array(array("category"=>$categoryArray3));
+      // creating dataset object
+      $arrData3["dataset"] = array(
+        array("seriesName"=> "Price", "data"=>$dataseries23));
+
+
+     $jsonEncodedData3 = json_encode($arrData3);
+
+     $columnChartmb = new FusionCharts("column2d",
+                                        "chartId3",
+                                        700,
+                                        400,
+                                        "chart-mb",
+                                        "json",
+                                        $jsonEncodedData3);
+
+     // Render the chart
+     $columnChartmb->render();
+}
+
+
 
 
      // Close the database connection
@@ -271,6 +364,8 @@ $email = $_SESSION['username']
  <div id="chart-cpu" align="center"> </div>
  <br><br>
  <div id="chart-gpu" align="center"> </div>
+ <br><br>
+ <div id="chart-mb" align="center"> </div>
 
 </body>
 
