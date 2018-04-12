@@ -44,7 +44,7 @@ $result = $mysqli->query($query) or die($mysqli->error);
                     <h4><?php echo $row['name']; ?></h4>
                 </div>
                 <p>
-                    <?php echo "<a class = \"btn btn-success\" onclick=\"myFunction2('".$row['name']."')\">Info</a>"; ?>
+                    <?php echo "<a class = \"btn btn-info\" onclick=\"myFunction2('".$row['name']."')\">Info</a>"; ?>
                 </p>
             </div>
         </div>
@@ -69,7 +69,7 @@ $result = $mysqli->query($query) or die($mysqli->error);
                     <h4><?php echo $row['name']; ?></h4>
                 </div>
                 <p>
-                    <?php echo "<a class = \"btn btn-success\" onclick=\"myFunction2('".$row['name']."')\">Info</a>"; ?>
+                    <?php echo "<a class = \"btn btn-info\" onclick=\"myFunction2('".$row['name']."')\">Info</a>"; ?>
                 </p>
             </div>
         </div>
@@ -94,7 +94,7 @@ $result = $mysqli->query($query) or die($mysqli->error);
                     <h4><?php echo $row['name']; ?></h4>
                 </div>
                 <p>
-                    <?php echo "<a class = \"btn btn-success\" onclick=\"myFunction2('".$row['name']."')\">Info</a>"; ?>
+                    <?php echo "<a class = \"btn btn-info\" onclick=\"myFunction2('".$row['name']."')\">Info</a>"; ?>
                 </p>
             </div>
         </div>
@@ -119,7 +119,7 @@ $result = $mysqli->query($query) or die($mysqli->error);
                     <h4><?php echo $row['name']; ?></h4>
                 </div>
                 <p>
-                    <?php echo "<a class = \"btn btn-success\" onclick=\"myFunction2('".$row['name']."')\">Info</a>"; ?>
+                    <?php echo "<a class = \"btn btn-info\" onclick=\"myFunction2('".$row['name']."')\">Info</a>"; ?>
                 </p>
             </div>
         </div>
@@ -144,7 +144,7 @@ $result = $mysqli->query($query) or die($mysqli->error);
                     <h4><?php echo $row['name']; ?></h4>
                 </div>
                 <p>
-                    <?php echo "<a class = \"btn btn-success\" onclick=\"myFunction2('".$row['name']."')\">Info</a>"; ?>
+                    <?php echo "<a class = \"btn btn-info\" onclick=\"myFunction2('".$row['name']."')\">Info</a>"; ?>
                 </p>
             </div>
         </div>

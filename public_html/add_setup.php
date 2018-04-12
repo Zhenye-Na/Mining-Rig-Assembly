@@ -329,7 +329,7 @@ $result = $mysqli->query($query) or die($mysqli->error);
                 <p>
                     <?php echo "<a class = \"btn btn-success\" onclick=\"myFunction('".$row['name']."','mb','".$row['image_url']."')\">Add</a>"; ?>
                     
-                    <?php echo "<a class = \"btn btn-success\" onclick=\"myFunction4('".$row['name']."')\">Info</a>"; ?>
+                    <?php echo "<a class = \"btn btn-info\" onclick=\"myFunction4('".$row['name']."')\">Info</a>"; ?>
                 </p>
             </div>
         </div>
@@ -355,7 +355,7 @@ $result = $mysqli->query($query) or die($mysqli->error);
                 </div>
                 <p>
                     <?php echo "<a class = \"btn btn-success\" onclick=\"myFunction('".$row['name']."','cpu','".$row['image_url']."')\">Add</a>"; ?>
-                    <?php echo "<a class = \"btn btn-success\" onclick=\"myFunction4('".$row['name']."')\">Info</a>"; ?>
+                    <?php echo "<a class = \"btn btn-info\" onclick=\"myFunction4('".$row['name']."')\">Info</a>"; ?>
                 </p>
             </div>
         </div>
@@ -381,7 +381,7 @@ $result = $mysqli->query($query) or die($mysqli->error);
                 </div>
                 <p>
                     <?php echo "<a class = \"btn btn-success\" onclick=\"myFunction('".$row['name']."','gpu','".$row['image_url']."')\">Add</a>"; ?>
-                    <?php echo "<a class = \"btn btn-success\" onclick=\"myFunction4('".$row['name']."')\">Info</a>"; ?>
+                    <?php echo "<a class = \"btn btn-info\" onclick=\"myFunction4('".$row['name']."')\">Info</a>"; ?>
                 </p>
             </div>
         </div>
@@ -407,7 +407,7 @@ $result = $mysqli->query($query) or die($mysqli->error);
                 </div>
                 <p>
                     <?php echo "<a class = \"btn btn-success\" onclick=\"myFunction('".$row['name']."','ram','".$row['image_url']."')\">Add</a>"; ?>
-                    <?php echo "<a class = \"btn btn-success\" onclick=\"myFunction4('".$row['name']."')\">Info</a>"; ?>
+                    <?php echo "<a class = \"btn btn-info\" onclick=\"myFunction4('".$row['name']."')\">Info</a>"; ?>
                 </p>
             </div>
         </div>
@@ -433,7 +433,7 @@ $result = $mysqli->query($query) or die($mysqli->error);
                 </div>
                 <p>
                     <?php echo "<a class = \"btn btn-success\" onclick=\"myFunction('".$row['name']."','psu','".$row['image_url']."')\">Add</a>"; ?>
-                    <?php echo "<a class = \"btn btn-success\" onclick=\"myFunction4('".$row['name']."')\">Info</a>"; ?>
+                    <?php echo "<a class = \"btn btn-info\" onclick=\"myFunction4('".$row['name']."')\">Info</a>"; ?>
                 </p>
             </div>
         </div>
