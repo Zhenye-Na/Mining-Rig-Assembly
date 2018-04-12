@@ -100,11 +100,12 @@
           "caption" => "Comparison between your selected CPUs",
           "showValues" => "1",
           "theme" => "fint",
-          "pyaxisname"=> "Price",
-          "syaxisname"=> "Speed",
-          "xaxisname"=>"CPU",
-          "pYAxisMaxValue"=> "5",
-          "numberPrefix"=> "$"
+          "pyaxisname" => "Price",
+          "syaxisname" => "Speed",
+          "xaxisname" =>"CPU",
+          "pYAxisMaxValue" => "5",
+          "numberPrefix" => "$",
+          "baseFont" => "Verdana"
         )
       );
 
@@ -180,10 +181,11 @@
           "caption" => "Comparison between your selected GPUs",
           "showValues" => "1",
           "theme" => "fint",
-          "pyaxisname"=> "Price",
-          "syaxisname"=> "Clock",
-          "xaxisname"=>"GPU",
-          "numberPrefix"=> "$"
+          "pyaxisname" => "Price",
+          "syaxisname" => "Clock",
+          "xaxisname" =>"GPU",
+          "numberPrefix" => "$",
+          "baseFont" => "Verdana"
         )
       );
 
@@ -248,9 +250,11 @@
           "caption" => "Comparison between your selected MothBoards",
           "showValues" => "1",
           "theme" => "fint",
-          "pyaxisname"=> "Price",
-          "xaxisname"=>"MothBoards",
-          "numberPrefix"=> "$"
+          "pyaxisname" => "Price",
+          "xaxisname" =>"MothBoards",
+          "numberPrefix" => "$",
+          "rotateValues" => "0",
+          "baseFont" => "Verdana"
         )
       );
 
@@ -307,10 +311,11 @@
           "caption" => "Comparison between your selected PSUs",
           "showValues" => "1",
           "theme" => "fint",
-          "pyaxisname"=> "Price",
-          "syaxisname"=> "Power",
-          "xaxisname"=>"PSU",
-          "numberPrefix"=> "$"
+          "pyaxisname" => "Price",
+          "syaxisname" => "Power",
+          "xaxisname" =>"PSU",
+          "numberPrefix" => "$",
+          "baseFont" => "Verdana"
         )
       );
 
@@ -375,10 +380,11 @@
           "caption" => "Comparison between your selected RAMs",
           "showValues" => "1",
           "theme" => "fint",
-          "pyaxisname"=> "Size",
-          "syaxisname"=> "Power",
-          "xaxisname"=>"RAM",
-          "numberPrefix"=> "$"
+          "pyaxisname" => "Price",
+          "syaxisname" => "Size",
+          "xaxisname" =>"RAM",
+          "numberPrefix" => "$",
+          "baseFont" => "Verdana"
         )
       );
 
@@ -439,13 +445,13 @@
  ?>
 
   <div id="chart-cpu" align="center"> </div>
-  <br><br>
+  <br><br><br><br>
   <div id="chart-gpu" align="center"> </div>
-  <br><br>
+  <br><br><br><br>
   <div id="chart-mb" align="center"> </div>
-  <br><br>
+  <br><br><br><br>
   <div id="chart-psu" align="center"> </div> 
-  <br><br>
+  <br><br><br><br>
   <div id="chart-ram" align="center"> </div>
 
 </body>
