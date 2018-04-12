@@ -55,22 +55,6 @@ $email = $_SESSION['username']
       
       
       // gpu query -> gpu_name, lock, price
-    //   $gpuQuery = "SELECT name, lock
-    //               FROM gpu
-    //               WHERE name IN (SELECT gpu_name
-    //                              FROM includes
-    //                              WHERE setID IN (SELECT setID
-    //                                             FROM creates
-    //                                             WHERE email = '$email'))
-    //               UNION
-    //               SELECT price
-    //               FROM components
-    //               WHERE name IN (SELECT gpu_name
-    //                              FROM includes
-    //                              WHERE setID IN (SELECT setID
-    //                                             FROM creates
-    //                                             WHERE email = '$email'))";
-
       $gpuQuery = "SELECT ALL gpu.name as name, gpu.clock as clock, components.price as price
                    FROM creates
                    INNER JOIN includes ON creates.setID = includes.setID
@@ -79,14 +63,6 @@ $email = $_SESSION['username']
                    WHERE creates.email = '$email'";
 
       // mb query -> mb_name, price
-    //   $mbQuery = "SELECT name, price
-    //               FROM components
-    //               WHERE components.name IN (SELECT includes.mb_name
-    //                              FROM includes
-    //                              WHERE includes.setID IN (SELECT setID
-    //                                             FROM creates
-    //                                             WHERE email = '$email'))";
-    
       $mbQuery = "SELECT ALL mb.name as name, components.price as price
                   FROM creates
                   INNER JOIN includes ON creates.setID = includes.setID
@@ -96,21 +72,27 @@ $email = $_SESSION['username']
 
 
       // psu query -> name, price, power
-      $psuQuery = "SELECT name, power
-                   FROM psu
-                   WHERE name IN (SELECT psu_name
-                                 FROM includes
-                                 WHERE setID = (SELECT setID
-                                                FROM creates
-                                                WHERE email = '$email'))
-                   UNION
-                   SELECT price
-                   FROM components
-                   WHERE name IN (SELECT psu_name
-                                 FROM includes
-                                 WHERE setID IN (SELECT setID
-                                                FROM creates
-                                                WHERE email = '$email'))";
+    //   $psuQuery = "SELECT name, power
+    //               FROM psu
+    //               WHERE name IN (SELECT psu_name
+    //                              FROM includes
+    //                              WHERE setID = (SELECT setID
+    //                                             FROM creates
+    //                                             WHERE email = '$email'))
+    //               UNION
+    //               SELECT price
+    //               FROM components
+    //               WHERE name IN (SELECT psu_name
+    //                              FROM includes
+    //                              WHERE setID IN (SELECT setID
+    //                                             FROM creates
+    //                                             WHERE email = '$email'))";
+      $psuQuery = "SELECT ALL psu.name as name, psu.power as power, components.price as price
+               FROM creates
+               INNER JOIN includes ON creates.setID = includes.setID
+               INNER JOIN psu ON includes.psu_name = psu.name
+               INNER JOIN components ON components.name = psu.name
+               WHERE creates.email = '$email'";
 
 
       // ram query -> name, price, size
@@ -135,6 +117,7 @@ $email = $_SESSION['username']
       $resultcpu = mysqli_query($mysqli, $cpuQuery) or exit("Error code ({$mysqli->errno}): {$mysqli->error}");
       $resultgpu = mysqli_query($mysqli, $gpuQuery) or exit("Error code ({$mysqli->errno}): {$mysqli->error}");
       $resultmb = mysqli_query($mysqli, $mbQuery) or exit("Error code ({$mysqli->errno}): {$mysqli->error}");
+      $resultpsu = mysqli_query($mysqli, $psuQuery) or exit("Error code ({$mysqli->errno}): {$mysqli->error}");
 
       // If the query returns a valid response, prepare the JSON string
       
@@ -354,6 +337,73 @@ $email = $_SESSION['username']
 }
 
 
+      // psu
+      
+      if ($resultpsu) {
+        // The `$arrData` array holds the chart attributes and data
+        $arrData4 = array(
+            "chart" => array(
+              "caption" => "Comparison between your selected PSUs",
+              "showValues" => "1",
+              "theme" => "fint",
+              "pyaxisname"=> "Price",
+              "syaxisname"=> "Power",
+              "xaxisname"=>"PSU",
+              "numberPrefix"=> "$",
+
+          )
+        );
+
+        // creating array for categories object
+        
+        $arrData4["data"] = array();
+        $categoryArray4=array();
+        $dataseries14=array();
+        $dataseries24=array();
+        // $dataseries3=array();
+
+        // Push the data into the array
+
+        // pushing category array values
+        while($row = mysqli_fetch_array($resultpsu)) {
+            array_push($categoryArray4, array(
+                "label" => $row["name"]
+                )
+            );
+            
+             array_push($dataseries14, array(
+                "value" => $row["power"]
+                )
+            );
+            
+            array_push($dataseries24, array(
+                "value" => $row["price"]
+                )
+            );
+            
+            }
+
+
+      $arrData4["categories"]=array(array("category"=>$categoryArray4));
+      // creating dataset object
+      $arrData4["dataset"] = array(
+        array("seriesName"=> "Power", "parentYAxis" => "S", "showValues"=> "0", "data"=>$dataseries14), 
+        array("seriesName"=> "Price", "data"=>$dataseries24));
+
+
+     $jsonEncodedData4 = json_encode($arrData4);
+
+     $columnChartpsu = new FusionCharts("mscombidy2d",
+                                        "chartId4",
+                                        700,
+                                        400,
+                                        "chart-psu",
+                                        "json",
+                                        $jsonEncodedData4);
+
+     // Render the chart
+     $columnChartpsu->render();
+}
 
 
      // Close the database connection
@@ -366,6 +416,9 @@ $email = $_SESSION['username']
  <div id="chart-gpu" align="center"> </div>
  <br><br>
  <div id="chart-mb" align="center"> </div>
+ <br><br>
+ <div id="chart-psu" align="center"> </div> 
+
 
 </body>
 
@@ -407,4 +460,3 @@ $email = $_SESSION['username']
      overflow:scroll;
  }
 </style>
-
