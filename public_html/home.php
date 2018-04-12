@@ -52,7 +52,9 @@ include('header.php');
     <div class = "container">
     	<div class = "text-center" style = "padding-bottom: 30px">
 
-        	    <a class = "btn btn-primary btn-lg" onclick="myFunction2(-1)" >Create Your Setup</a>
+        	    <a class = "btn btn-primary btn-lg" onclick="myFunction2(-1)" style="width: 200px" >Create Your Setup</a>
+        	    
+        	    <a class = "btn btn-primary btn-lg" style="width: 200px" href="compare.php" target="_blank" >Compare Your Setup</a>
 
     	 
 	    </div>
