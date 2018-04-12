@@ -96,21 +96,27 @@ $email = $_SESSION['username']
 
 
       // ram query -> name, price, size
-      $ramQuery = "SELECT name, size
-                   FROM ram
-                   WHERE name IN (SELECT ram_name
-                                 FROM includes
-                                 WHERE setID IN (SELECT setID
-                                                FROM creates
-                                                WHERE email = '$email'))
-                   UNION
-                   SELECT price
-                   FROM components
-                   WHERE name IN (SELECT ram_name
-                                 FROM includes
-                                 WHERE setID IN (SELECT setID
-                                                FROM creates
-                                                WHERE email = '$email'))";
+    //   $ramQuery = "SELECT name, size
+    //               FROM ram
+    //               WHERE name IN (SELECT ram_name
+    //                              FROM includes
+    //                              WHERE setID IN (SELECT setID
+    //                                             FROM creates
+    //                                             WHERE email = '$email'))
+    //               UNION
+    //               SELECT price
+    //               FROM components
+    //               WHERE name IN (SELECT ram_name
+    //                              FROM includes
+    //                              WHERE setID IN (SELECT setID
+    //                                             FROM creates
+    //                                             WHERE email = '$email'))";
+      $ramQuery = "SELECT ALL ram.name as name, ram.size as size, components.price as price
+                   FROM creates
+                   INNER JOIN includes ON creates.setID = includes.setID
+                   INNER JOIN ram ON includes.ram_name = ram.name
+                   INNER JOIN components ON components.name = ram.name
+                   WHERE creates.email = '$email'";
 
       // Execute the query, or else return the error message.
 
@@ -118,6 +124,7 @@ $email = $_SESSION['username']
       $resultgpu = mysqli_query($mysqli, $gpuQuery) or exit("Error code ({$mysqli->errno}): {$mysqli->error}");
       $resultmb = mysqli_query($mysqli, $mbQuery) or exit("Error code ({$mysqli->errno}): {$mysqli->error}");
       $resultpsu = mysqli_query($mysqli, $psuQuery) or exit("Error code ({$mysqli->errno}): {$mysqli->error}");
+      $resultram = mysqli_query($mysqli, $ramQuery) or exit("Error code ({$mysqli->errno}): {$mysqli->error}");
 
       // If the query returns a valid response, prepare the JSON string
       
@@ -406,6 +413,74 @@ $email = $_SESSION['username']
 }
 
 
+
+      // ram
+      
+      if ($resultram) {
+        // The `$arrData` array holds the chart attributes and data
+        $arrData5 = array(
+            "chart" => array(
+              "caption" => "Comparison between your selected RAMs",
+              "showValues" => "1",
+              "theme" => "fint",
+              "pyaxisname"=> "Size",
+              "syaxisname"=> "Power",
+              "xaxisname"=>"RAM",
+              "numberPrefix"=> "$",
+
+          )
+        );
+
+        // creating array for categories object
+        
+        $arrData5["data"] = array();
+        $categoryArray5=array();
+        $dataseries15=array();
+        $dataseries25=array();
+
+        // Push the data into the array
+        // pushing category array values
+        while($row = mysqli_fetch_array($resultram)) {
+          array_push($categoryArray5, array(
+            "label" => $row["name"]
+          )
+        );
+
+          array_push($dataseries15, array(
+            "value" => $row["size"]
+          )
+        );
+
+          array_push($dataseries25, array(
+            "value" => $row["price"]
+          )
+        );
+
+        }
+
+      // creating categories array
+      $arrData5["categories"]=array(array("category"=>$categoryArray5));
+      // creating dataset object
+      $arrData5["dataset"] = array(
+        array("seriesName"=> "Size", "parentYAxis" => "S", "showValues"=> "0", "data"=>$dataseries15), 
+        array("seriesName"=> "Price", "data"=>$dataseries25));
+
+
+     $jsonEncodedData5 = json_encode($arrData5);
+
+     $columnChartram = new FusionCharts("mscombidy2d",
+                                        "chartId5",
+                                        700,
+                                        400,
+                                        "chart-ram",
+                                        "json",
+                                        $jsonEncodedData5);
+
+     // Render the chart
+     $columnChartram->render();
+}
+
+
      // Close the database connection
      $mysqli->close();
 
@@ -418,7 +493,8 @@ $email = $_SESSION['username']
  <div id="chart-mb" align="center"> </div>
  <br><br>
  <div id="chart-psu" align="center"> </div> 
-
+ <br><br>
+ <div id="chart-ram" align="center"> </div>
 
 </body>
 
