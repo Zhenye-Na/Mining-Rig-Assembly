@@ -5,7 +5,7 @@ ini_set('display_errors', 1);
 ignore_user_abort(); //即使Client断开(如关掉浏览器)，PHP脚本也可以继续执行.
 set_time_limit(0); // 执行时间为无限制，php默认执行时间是30秒，可以让程序无限制的执行下去
 // $interval=24*60*60*7; // 每隔7天运行一次
-$interval=2;// This interval will change to 24*60*60*7, 2 is just for testing.
+$interval=60*30;// This interval will change to 24*60*60*7, 2 is just for testing.
 do{
 
     require("db.php");
@@ -82,8 +82,9 @@ do{
             $xml = simplexml_load_string($xml);
             
             $cnt = 0;
+            
             while ($cnt < $count) {
-                
+                echo $cnt;
                 $price = (float)($xml->Items->Item[$cnt]->ItemAttributes->ListPrice->Amount[0])/100;
                 $asin = $xml->Items->Item[$cnt]->ASIN;
     
@@ -100,13 +101,25 @@ do{
         }
     }
     ////////////////////////////////////////////////////////////////////////////
+
+    // Update bitcoin price using Coindesk API
+
+   $bp_url = "https://api.coindesk.com/v1/bpi/currentprice.json";
+   $json = file_get_contents($bp_url);
+   $data = json_decode($json,true);
+
+   $bitcoin_price = (float)$data["bpi"]["USD"]["rate_float"];
+   echo "<pre>";
+   print_r($bitcoin_price);
+   echo "<pre>";
    
+   $result = $mysqli->query("UPDATE bp SET price=$bitcoin_price WHERE id=1");
    ///////////////////////////////////////////////Calculte the pay back period
    $query = "SELECT * FROM includes WHERE subscript = 1;";
    $result = $mysqli->query($query) or die($mysqli->error);
    //for each setid
    while($row = $result->fetch_assoc()){
-        echo $row['setID']."<br>";
+        // echo $row['setID']."<br>";
    	    $setid = $row['setID'];
        	$price = 0;
        	// calculate the total price of setup
@@ -142,7 +155,7 @@ do{
             mail($row['email'], 'Updated pay back for your setup', $message);
       	  }
    	}
-   	echo($price);
+   	// echo($price);
     sleep($interval);
 
 }while(true);
