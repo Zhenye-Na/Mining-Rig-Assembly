@@ -11,6 +11,7 @@
     
     if($setid > 0){
         $result = $mysqli->query("UPDATE includes SET mb_name = '$mb', cpu_name='$cpu', gpu_name='$gpu', ram_name='$ram', psu_name='$psu' WHERE setID = $setid");
+        $result = $mysqli->query("UPDATE includes SET totalprice=(SELECT SUM(price) FROM components WHERE name=cpu_name OR name=gpu_name OR name=ram_name OR name=psu_name OR name=mb_name) WHERE setID = $setid");
         Print '<script>alert("setup modified!");</script>';
 
     }else{
@@ -18,6 +19,7 @@
     	$email = $_SESSION['username']; //email
     	$id =  $mysqli->insert_id; //setID
     	$result = $mysqli->query("INSERT INTO creates(email,setID) VALUES ('$email','$id')");
+    	$result = $mysqli->query("UPDATE includes SET totalprice=(SELECT SUM(price) FROM components WHERE name=cpu_name OR name=gpu_name OR name=ram_name OR name=psu_name OR name=mb_name) WHERE setID = $id");
         
     	Print '<script>alert("setup created!");</script>'; //Prompts the user
     }

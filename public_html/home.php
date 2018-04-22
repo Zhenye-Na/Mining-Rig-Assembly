@@ -40,6 +40,22 @@ $username = $_SESSION['username']; //assigns user value
     document.body.appendChild(form);
     form.submit();
 }
+    function myFunction3(value) {
+    method = "post";
+
+    var form = document.createElement("form");
+    form.setAttribute("method", method);
+    form.setAttribute("action", "subscribe.php");
+
+    var name = document.createElement("input");
+    name.setAttribute("type", "hidden");
+    name.setAttribute("name", "setID");
+    name.setAttribute("value", value);
+    form.appendChild(name);
+    
+    document.body.appendChild(form);
+    form.submit();
+}
 
 
 </script>
@@ -108,6 +124,8 @@ $result = $mysqli->query($query) or die($mysqli->error);
         </div>
         <?php echo "<a class = \"btn btn-success\" onclick=\"myFunction2('".$row['setID']."')\">Edit</a>"; ?>
         <?php echo "<a class = \"btn btn-danger\" onclick=\"myFunction('".$row['setID']."')\">Delete</a>"; ?>
+        <?php echo "<a class = \"btn btn-primary\" onclick=\"myFunction3('".$row['setID']."')\">Subscribe</a>"; ?>
+
         <?php $order += 1?>
     </div>
     <?php } ?>

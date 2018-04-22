@@ -2,10 +2,10 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-ignore_user_abort(); //即使Client断开(如关掉浏览器)，PHP脚本也可以继续执行.
-set_time_limit(0); // 执行时间为无限制，php默认执行时间是30秒，可以让程序无限制的执行下去
-// $interval=24*60*60*7; // 每隔7天运行一次
-$interval=60*30;// This interval will change to 24*60*60*7, 2 is just for testing.
+ignore_user_abort(); //
+set_time_limit(0); //
+$interval=24*60*60*7;// This script will automatically run once a week
+$request_interval = 60;// This interval is for requesting the components prices from API(API has limited the request amount)
 do{
 
     require("db.php");
@@ -75,7 +75,7 @@ do{
             
             // Generate the signed URL
             $request_url = 'http://'.$endpoint.$uri.'?'.$canonical_query_string.'&Signature='.rawurlencode($signature);
-            
+            sleep($request_interval);
             $xml = file_get_contents($request_url);
             
             //load xml
@@ -84,7 +84,7 @@ do{
             $cnt = 0;
             
             while ($cnt < $count) {
-                echo $cnt;
+                // echo $cnt;
                 $price = (float)($xml->Items->Item[$cnt]->ItemAttributes->ListPrice->Amount[0])/100;
                 $asin = $xml->Items->Item[$cnt]->ASIN;
     
@@ -104,25 +104,34 @@ do{
 
     // Update bitcoin price using Coindesk API
 
-   $bp_url = "https://api.coindesk.com/v1/bpi/currentprice.json";
+   $bp_url = "https://www.etherchain.org/api/price";
    $json = file_get_contents($bp_url);
    $data = json_decode($json,true);
 
-   $bitcoin_price = (float)$data["bpi"]["USD"]["rate_float"];
-   echo "<pre>";
-   print_r($bitcoin_price);
-   echo "<pre>";
+   $bitcoin_price = (float)$data[sizeof($data)-1]["usd"];
    
-   $result = $mysqli->query("UPDATE bp SET price=$bitcoin_price WHERE id=1");
-   ///////////////////////////////////////////////Calculte the pay back period
+   $result = $mysqli->query("UPDATE eth SET value=$bitcoin_price WHERE bitcoin_attr='price'");
+
+   $diff_url = "https://www.etherchain.org/api/difficulty";
+   $json = file_get_contents($diff_url);
+   $data = json_decode($json, true);
+   $difficulty = (float)$data[0]['difficulty'];
+
+   $result = $mysqli->query("UPDATE eth SET value=$difficulty WHERE bitcoin_attr='difficulty'");
+   //////////////////////////////////////////////Calculate the setup totalprice 
+   $query = "UPDATE includes SET totalprice=(SELECT SUM(price) FROM components WHERE name=cpu_name OR name=gpu_name OR name=ram_name OR name=psu_name OR name=mb_name);";
+    $result = $mysqli->query($query) or die($mysqli->error);
+   ///////////////////////////////////////////////Calculate the pay back period
    $query = "SELECT * FROM includes WHERE subscript = 1;";
    $result = $mysqli->query($query) or die($mysqli->error);
    //for each setid
    while($row = $result->fetch_assoc()){
         // echo $row['setID']."<br>";
    	    $setid = $row['setID'];
-       	$price = 0;
+        $gpu = $row['gpu_name'];
+       	$price = $row['totalprice'];
        	// calculate the total price of setup
+        /*
        	foreach ($row as $column=>$value){
        	  if($column!= 'setID' && $column!= 'subscript'){
            	  $item_query = "SELECT price FROM components where name = '$value';";
@@ -132,8 +141,21 @@ do{
            	  }
            }
        	 }
-       	 
+       	 */
        	 // calculate the pay back period for each setup(using $price(total price of each setup) and current bitcoint price(find out by API?))
+         
+         $query = "SELECT hashrate, power FROM gpu WHERE name='$gpu'";
+         $result2 = $mysqli->query($query) or die($mysqli->error);
+         $res = $result2->fetch_assoc();
+         echo "<pre>";
+         print_r($res);
+         print_r($gpu);
+         echo "<pre>";
+         $profit_per_day = $bitcoin_price * 86400 * 3.64 * $res['hashrate'] * 1000000 / $difficulty;
+         $power_bill = $res['power'] * 24 * 0.12 /1000;
+         $payback_time = $price / ($profit_per_day - $power_bill);
+         $result3 = $mysqli->query("UPDATE includes SET payback=$payback_time WHERE setID=$setid");
+         
        	 
        	 
        	 

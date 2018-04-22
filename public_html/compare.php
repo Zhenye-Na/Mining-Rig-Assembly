@@ -36,6 +36,22 @@
 
   <body>
     <?php
+    
+    // totprice+ payback query -> id(row index), totalprice, payback
+    $setupQuery ="set @row_num=0";
+    $totPricePaybackQuery = "SELECT ALL @row_num := @row_num + 1 AS id, includes.totalprice as totprice, includes.payback as payback
+                 FROM creates
+                 INNER JOIN includes ON creates.setID = includes.setID
+                 WHERE creates.email = '$email'";
+    
+                 
+    // cpu query -> cpu_name, speed, price
+    $cpuQuery = "SELECT ALL cpu.name as name, cpu.speed as speed, components.price as price
+                 FROM creates
+                 INNER JOIN includes ON creates.setID = includes.setID
+                 INNER JOIN cpu ON includes.cpu_name = cpu.name
+                 INNER JOIN components ON components.name = cpu.name
+                 WHERE creates.email = '$email'";
 
     // cpu query -> cpu_name, speed, price
     $cpuQuery = "SELECT ALL cpu.name as name, cpu.speed as speed, components.price as price
@@ -82,13 +98,93 @@
 
 
     // Execute the query, or else return the error message.
-
+    mysqli_query($mysqli, $setupQuery); 
+    $resulttotPricePayback = mysqli_query($mysqli, $totPricePaybackQuery) or exit("Error code ({$mysqli->errno}): {$mysqli->error}");
     $resultcpu = mysqli_query($mysqli, $cpuQuery) or exit("Error code ({$mysqli->errno}): {$mysqli->error}");
     $resultgpu = mysqli_query($mysqli, $gpuQuery) or exit("Error code ({$mysqli->errno}): {$mysqli->error}");
     $resultmb = mysqli_query($mysqli, $mbQuery) or exit("Error code ({$mysqli->errno}): {$mysqli->error}");
     $resultpsu = mysqli_query($mysqli, $psuQuery) or exit("Error code ({$mysqli->errno}): {$mysqli->error}");
     $resultram = mysqli_query($mysqli, $ramQuery) or exit("Error code ({$mysqli->errno}): {$mysqli->error}");
 
+    
+    // totalprice
+    // If the query returns a valid response, prepare the JSON string      
+    if ($resulttotPricePayback) {
+      // The `$arrData` array holds the chart attributes and data
+      $arrData0 = array(
+        "chart" => array(
+          "caption" => "Comparison between your selected setup",
+          "showValues" => "1",
+          "theme" => "fint",
+          "pyaxisname" => "total price",
+          "syaxisname" => "payback period",
+          "xaxisname" =>"setup#",
+          "numberPrefix" => "$",
+          "baseFont" => "Verdana"
+        )
+      );
+
+      // creating array for categories object
+      
+      $arrData0["data"] = array();
+      $categoryArray0=array();
+      $dataseries10=array();
+      $dataseries20=array();
+
+      // Push the data into the array
+      // pushing category array values
+      while($row = mysqli_fetch_array($resulttotPricePayback)) {
+
+        array_push($categoryArray0, array(
+          "label" => $row["id"]
+        )
+      );
+
+        array_push($dataseries10, array(
+          "value" => $row["totprice"]
+        )
+      );
+
+        array_push($dataseries20, array(
+          "value" => $row["payback"]
+        )
+      );
+
+      }
+
+      // creating categories array
+      $arrData0["categories"]=array(array("category"=>$categoryArray0));
+      // creating dataset object
+      $arrData0["dataset"] = array(
+        array("seriesName"=> "totprice", "parentYAxis" => "S", "showValues"=> "0", "data"=>$dataseries10), 
+        array("seriesName"=> "payback period", "data"=>$dataseries20));
+
+
+      /*JSON Encode the data to retrieve the string containing the JSON representation of the data in the array. */
+
+      $jsonEncodedData0 = json_encode($arrData0);
+
+      /*Create an object for the column chart using the FusionCharts PHP class constructor. Syntax for the constructor is ` 
+      FusionCharts("type of chart",
+                  "unique chart id",
+                  width of the chart,
+                  height of the chart,
+                  "div id to render the chart",
+                  "data format",
+                  "data source")`.
+      Because we are using JSON data to render the chart, the data format will be `json`. The variable `$jsonEncodeData` holds all the JSON data for the chart, and will be passed as the value for the data source parameter of the constructor.*/
+
+      $columnCharttprice = new FusionCharts("mscombidy2d",
+                                         "chartId0",
+                                         700,
+                                         400,
+                                         "chart-totalprice",
+                                         "json",
+                                         $jsonEncodedData0);
+
+      // Render the chart
+      $columnCharttprice->render();
+    }
 
     
     // cpu
@@ -443,7 +539,8 @@
      $mysqli->close();
 
  ?>
-
+  <div id="chart-totalprice" align="center"> </div>
+  <br><br><br><br>
   <div id="chart-cpu" align="center"> </div>
   <br><br><br><br>
   <div id="chart-gpu" align="center"> </div>
