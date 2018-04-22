@@ -43,7 +43,12 @@
                  FROM creates
                  INNER JOIN includes ON creates.setID = includes.setID
                  WHERE creates.email = '$email'";
-    
+
+    $setupQuery2 ="set @row_num2=0";                 
+    $totPricePaybackQuery2 = "SELECT ALL @row_num2 := @row_num2 + 1 AS id, includes.totalprice as totprice, includes.payback as payback
+                 FROM creates
+                 INNER JOIN includes ON creates.setID = includes.setID
+                 WHERE creates.email = '$email'";
                  
     // cpu query -> cpu_name, speed, price
     $cpuQuery = "SELECT ALL cpu.name as name, cpu.speed as speed, components.price as price
@@ -100,6 +105,7 @@
     // Execute the query, or else return the error message.
     mysqli_query($mysqli, $setupQuery); 
     $resulttotPricePayback = mysqli_query($mysqli, $totPricePaybackQuery) or exit("Error code ({$mysqli->errno}): {$mysqli->error}");
+    $resulttotPricePayback2 = mysqli_query($mysqli, $totPricePaybackQuery2) or exit("Error code ({$mysqli->errno}): {$mysqli->error}");
     $resultcpu = mysqli_query($mysqli, $cpuQuery) or exit("Error code ({$mysqli->errno}): {$mysqli->error}");
     $resultgpu = mysqli_query($mysqli, $gpuQuery) or exit("Error code ({$mysqli->errno}): {$mysqli->error}");
     $resultmb = mysqli_query($mysqli, $mbQuery) or exit("Error code ({$mysqli->errno}): {$mysqli->error}");
@@ -113,11 +119,11 @@
       // The `$arrData` array holds the chart attributes and data
       $arrData0 = array(
         "chart" => array(
-          "caption" => "Comparison between your selected setup",
+          "caption" => "Comparison between your selected Setups",
           "showValues" => "1",
           "theme" => "fint",
-          "pyaxisname" => "total price",
-          "syaxisname" => "payback period",
+          "pyaxisname" => "Total Price",
+          "syaxisname" => "Payback Period",
           "xaxisname" =>"setup#",
           "numberPrefix" => "$",
           "baseFont" => "Verdana"
@@ -156,8 +162,8 @@
       $arrData0["categories"]=array(array("category"=>$categoryArray0));
       // creating dataset object
       $arrData0["dataset"] = array(
-        array("seriesName"=> "totprice", "parentYAxis" => "S", "showValues"=> "0", "data"=>$dataseries10), 
-        array("seriesName"=> "payback period", "data"=>$dataseries20));
+        array("seriesName"=> "totprice", "showValues"=> "1", "data"=>$dataseries10), 
+        array("seriesName"=> "payback period", "parentYAxis" => "S", "showValues"=> "0", "data"=>$dataseries20));
 
 
       /*JSON Encode the data to retrieve the string containing the JSON representation of the data in the array. */
@@ -185,6 +191,106 @@
       // Render the chart
       $columnCharttprice->render();
     }
+
+
+
+
+
+
+
+// totalprice
+    // If the query returns a valid response, prepare the JSON string      
+    if ($resulttotPricePayback2) {
+      // The `$arrData` array holds the chart attributes and data
+      $arrData00 = array(
+        "chart" => array(
+          "caption" => "Split of Total Prices by different Setups",
+          "subCaption"=> "Mining Rig Setups from $username",
+          "showPercentValues"=> "1",
+          "showPercentInTooltip"=> "0",
+          "theme" => "fint",
+          "numberPrefix"=> "$",
+          "decimals"=> "0",
+          "showTooltip"=> "0",
+          "centerLabelBold"=> "1",
+          "startingAngle"=> "310",
+          "useDataPlotColorForLabels"=> "1",
+          "showLegend"=> "1",
+          "showLabels"=> "0",
+          "defaultCenterLabel"=> "Total Price in USD",
+          "centerLabel"=> "$categoryArray00",
+          "baseFont" => "Verdana"
+        )
+      );
+
+      // creating array for categories object
+      
+      $arrData00["data"] = array();
+      $categoryArray00=array();
+      $dataseries100=array();
+      // $dataseries200=array();
+
+      // Push the data into the array
+      // pushing category array values
+      while($row = mysqli_fetch_array($resulttotPricePayback2)) {
+
+        array_push($categoryArray00, array(
+          "label" => $row["id"]
+        )
+      );
+
+        array_push($dataseries100, array(
+          "value" => $row["totprice"]
+        )
+      );
+
+    //     array_push($dataseries200, array(
+    //       "value" => $row["payback"]
+    //     )
+    //   );
+
+      }
+
+      // creating categories array
+      $arrData00["categories"]=array(array("category"=>$categoryArray00));
+      // creating dataset object
+      $arrData00["dataset"] = array(
+        array("seriesName"=> "totprice", "data"=>$dataseries100));
+        // array("seriesName"=> "payback period", "parentYAxis" => "S", "showValues"=> "0", "data"=>$dataseries200)
+
+
+      /*JSON Encode the data to retrieve the string containing the JSON representation of the data in the array. */
+
+      $jsonEncodedData00 = json_encode($arrData00);
+
+      /*Create an object for the column chart using the FusionCharts PHP class constructor. Syntax for the constructor is ` 
+      FusionCharts("type of chart",
+                  "unique chart id",
+                  width of the chart,
+                  height of the chart,
+                  "div id to render the chart",
+                  "data format",
+                  "data source")`.
+      Because we are using JSON data to render the chart, the data format will be `json`. The variable `$jsonEncodeData` holds all the JSON data for the chart, and will be passed as the value for the data source parameter of the constructor.*/
+
+      $columnCharttprice2 = new FusionCharts("doughnut2d",
+                                         "chartId010",
+                                         700,
+                                         400,
+                                         "chart-totalprice1",
+                                         "json",
+                                         $jsonEncodedData00);
+
+      // Render the chart
+      $columnCharttprice2->render();
+    }
+
+
+
+
+
+
+
 
     
     // cpu
@@ -540,6 +646,8 @@
 
  ?>
   <div id="chart-totalprice" align="center"> </div>
+  <br><br><br><br>
+  <div id="chart-totalprice1" align="center"> </div>
   <br><br><br><br>
   <div id="chart-cpu" align="center"> </div>
   <br><br><br><br>
