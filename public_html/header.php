@@ -4,8 +4,10 @@
 	<title>
 	    Mining Rigs Assembly -- Customize Your Rigs
 	</title>
+	
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 	<link rel="stylesheet" href="main.css"
+	
 </head>
 <body>
 	<nav class="navbar navbar-default">

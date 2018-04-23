@@ -15,6 +15,16 @@
    margin-top: 0px;
 }
 
+.jumbotron{
+    background: url(https://cdn.wccftech.com/wp-content/uploads/2017/11/ethereum-eth-hack.jpg);
+    background-position: center;
+    background-size: cover;
+    margin-bottom: 0;
+    height: 20%;
+    text-align: center;
+    color: white;
+}
+
 table.detail {
     font-family: arial, sans-serif;
     border-collapse: collapse;
@@ -71,3 +81,4 @@ table.similar td {
 table.similar tr:nth-child(even) {
     background-color: #dddddd;
 }
+
