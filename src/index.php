@@ -37,8 +37,8 @@ include('header.php');
 	<!--</div>-->
 	<header class = jumbotron>
 	    <div class = "text-center">
-	        <h1>Welcome to Rigassembly</h1>
-	        <p>Make your own setup by choosing our powerful components!</p>
+	        <h1>Welcome to Rigs Assembly</h1>
+	        <p>Build your own setup by choosing our powerful components!</p>
 	        <p>
 	            <a class = "btn btn-primary btn-large" href = 'register.php'>Sign Up</a>
 	        </p>
