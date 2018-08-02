@@ -1,4 +1,4 @@
-# Mining Rig Assembly
+# 🏬 MAMP based Mining-Rigs Web-store: Mining Rig Assembly
 
 ## Description
 
@@ -31,11 +31,11 @@ The data we will be using includes price information of computer parts such as `
 ### Advanced Functions
 > 2 creative functions never seen in other websites/app
 	
-- calculate payback period of the mining rig investment
+- **calculate payback period of the mining rig investment**
 		
 > This function is the core of this application. It allows the users to plan their investments without having to monitor every little aspect of the market at all time. It is especially useful, and convenient to have in the current situation because of how rapidly the prices are changing. 
 
-- comparisons between different parts/setups with visualization 
+- **comparisons between different parts/setups with visualization**
 
 > This can help user easier to understand the tradeoff of different setups and choose the best setup based on comparison.
 
@@ -55,3 +55,4 @@ The data we will be using includes price information of computer parts such as `
 
 Group Information: [Mining-Rig-Assembly-Group-Info](https://wiki.illinois.edu/wiki/display/cs411sp18/Lifeinvader)
 
+Project Introduction: [mining-rig-assembly](https://mining-rig-assembly.github.io/)
