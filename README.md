@@ -1,5 +1,9 @@
 # 🏬 MAMP based Mining-Rigs Web-store: Mining Rig Assembly
 
+> Website has been deprecated! For more details, please refer to the introductional video we made on Youtube
+
+[![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/a_5dKE140d0/0.jpg)](https://www.youtube.com/watch?v=a_5dKE140d0)
+
 ## Description
 
 Mining Rig Assembly is a web application that allows the users to browse different parts of a mining rig, store rig setups, and estimate the performance of their setups on one integrated site. Users can set their expected payback periods for the setups, and our application will calculate the potential profits of them based on real-time price information, and notify the user when their expected payback periods can be achieved. 
